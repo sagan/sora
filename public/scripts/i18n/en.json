@@ -1,6 +1,5 @@
-
-var zh_CN = {
+{
 	"TITLE": "Hello",
-	"Dashboard": "首页",
+	"Dashboard": "Dashboard",
 	"FOO": "This is a paragraph"
-};
+}

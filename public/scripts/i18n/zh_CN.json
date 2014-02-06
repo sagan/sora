@@ -1,6 +1,5 @@
-
-var en = {
+{
 	"TITLE": "Hello",
-	"Dashboard": "Dashboard",
+	"Dashboard": "首页",
 	"FOO": "This is a paragraph"
-};
+}

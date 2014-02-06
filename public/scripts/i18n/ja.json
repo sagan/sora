@@ -1,5 +1,4 @@
-
-var ja = {
+{
 	"TITLE": "Hello",
 	"Dashboard": "ホームページ",
 	"Download": "ダウンロード",
@@ -21,4 +20,4 @@ var ja = {
 	"Search": "検索",
 	"More": "もっと",
 	"FOO": "This is a paragraph"
-};
+}

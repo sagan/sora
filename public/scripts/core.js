@@ -24,10 +24,10 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 	$locationProvider.html5Mode(false);
 })
 .config(['$translateProvider', function($translateProvider) {
-	$translateProvider.translations('en', en);
-	$translateProvider.translations('ja', ja);
-	$translateProvider.translations('zh_CN', zh_CN);
-	$translateProvider.translations('zh_TW', zh_TW);
+	$translateProvider.useStaticFilesLoader({
+		prefix: 'scripts/i18n/',
+		suffix: '.json'
+	});
 	$translateProvider.preferredLanguage('en');
 }])
 .directive('integer', function() {
