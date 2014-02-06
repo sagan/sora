@@ -1,0 +1,47 @@
+<div ng-controller="FileController">
+	<h2>File {{file.name}}</h2>
+	<table class="table table-bordered table-fixed-columns-width">
+			<thead>
+				<tr>
+					<th width="30%">{{"Attribute" | translate}}</th>
+					<th width="70%">{{"Value" | translate}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<span>{{"Filename" | translate}}</span>
+					</td>
+					<td>
+						<span>{{file.name}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>{{"Size" | translate}}</span>
+					</td>
+					<td>
+						<span>{{file.size}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>{{"Modified" | translate}}</span>
+					</td>
+					<td>
+						<span>{{file.modified}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>{{"Operations" | translate}}</span>
+					</td>
+					<td>
+						<ul class="list-inline" >
+							<li><button  class="btn btn-primary" ng-click="download()"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</button></button></li>
+						</ul>
+					</td>
+				</tr>
+			</tbody>
+	</table>
+</div>

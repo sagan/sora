@@ -1,4 +1,5 @@
 {
 	"sitename": "Sora",
-	"sitedescription": "一个资源管理系统"
+	"sitedescription": "一个资源管理系统",
+	"mongodb_link": "mongodb://localhost/sora"
 }

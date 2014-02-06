@@ -1,0 +1,35 @@
+<div ng-controller="TagsController">
+	<h2>{{"Tags" | translate}}</h2>
+	<table class="table table-bordered table-fixed-columns-width">
+			<thead>
+				<tr>
+					<th width="30%">{{"Tagname" | translate}}</th>
+					<th width="20%">{{"Canonical" | translate}}</th>
+					<th width="50%">{{"Note" | translate}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="tag in tags | filter: filter">
+					<td>
+						<span>{{tag.name}}</span>
+					</td>
+					<td>
+						<span>{{tag.canonical}}</span>
+					</td>
+					<td>
+						<span>{{tag.note}}</span></td>
+					</td>
+				</tr>
+			</tbody>
+	</table>
+	<form class="form-inline">
+			<div class="form-group">
+				<div class="input-group" style="">
+					<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
+					<span class="input-group-btn">
+						<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
+					</span>
+				</div>
+			</div>
+		</form>
+</div>
