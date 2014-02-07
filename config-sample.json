@@ -1,6 +1,10 @@
 {
-	"sitename": "Sora",
-	"sitedescription": "一个资源管理系统",
+	"site_name": "Sora",
+	"site_description": "这里提供一些ACG资源下载, 目前主要是轻小说和Galgame剧本.",
+	"server_port": 3000,
+	"server_ip": "0.0.0.0",
+	"admin_name": "小野大神",
+	"admin_url": "https://oogami.name/",
 	"mongodb_link": "mongodb://localhost/sora",
-	"library_path": "/tmp/database"
+	"library_path": "/home/sagan/Dropbox/projects/sora/sora_example_data"
 }

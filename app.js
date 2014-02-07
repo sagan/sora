@@ -9,13 +9,12 @@ var path = require('path');
 var mongoose = require('mongoose');
 var locale = require('locale');
 var config = require('./config');
+var manifest = require('./package.json');
 var tag_controller = require('./controllers/tag');
 var file_controller = require('./controllers/file');
 var library = require('./library');
 var app = express();
 var supported = ['en', 'ja', 'zh_CN', 'zh_TW'];
-
-
 
 mongoose.connect(config.mongodb_link);
 var db = mongoose.connection;
@@ -28,7 +27,8 @@ db.once('open', function callback () {
 app.use(locale(supported));
 	
 app.configure(function(){
-	app.set('port', process.env.PORT || 3000);
+	app.set('port', config.server_port || process.env.PORT || 3000);
+	app.set('ip', config.server_ip || "0.0.0.0");
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());
@@ -61,7 +61,11 @@ app.get("/file/:id", app_route);
 app.get('/api/config', function(req, res){
 	res.json({
 		locale: req.locale,
-		sitename: config.sitename,
+		site_name: config.site_name,
+		site_description: config.site_description,
+		admin_name: config.admin_name,
+		admin_url: config.admin_url,
+		version: manifest.version,
 	});
 });
 app.get("/api/tags", tag_controller.get_tags);
@@ -70,6 +74,6 @@ app.get("/api/file/:id", file_controller.get_file);
 app.get("/api/file/:id/raw", file_controller.raw_file);
 app.get("/api/file/:id/raw/*", file_controller.raw_file);
 
-http.createServer(app).listen(app.get('port'), function(){
-	console.log("Express server listening on port " + app.get('port'));
+http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
+	console.log("Express server listening on port " + app.get('port') + ", ip " + app.get('ip'));
 });

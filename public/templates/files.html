@@ -25,12 +25,13 @@
 					</td>
 					<td>
 						<ul class="list-inline">
-							<li ng-repeat="tag in file.tags"><span><a href='{{get_tag_url(tag)}}'>{{tag}}</a></span></li>
+							<li ng-repeat="tag in file.tags"><span><a href='{{get_tag_url(tag)}}'>{{tag}}</a></span><span ng-if='$index != file.tags.length -1'>,</span></li>
 						</ul>
 					</td>
 				</tr>
 			</tbody>
 	</table>
+	<pagination rotate="false" boundary-links="true" max-size="10" total-items="count_all" page="current_page" items-per-page="per_page"></pagination>
 	<form class="form">
 		<div class="form-group" style="">
 			<div class="input-group" style="">

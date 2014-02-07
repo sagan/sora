@@ -16,6 +16,11 @@ var get_files = function(req, res, next) {
 		condition.tags = req.query.tags;
 	if( req.query.search )
 		condition.search = req.query.search;
+	
+	var skip = req.query.skip || 0;
+	var limit = req.query.limit || 20;
+	var sort = {};
+	sort[req.query.sort || 'name'] = req.query.order || 1;
 		
 	if( condition.search ) {
 		File.textSearch(condition.search, function(err, output) {
@@ -26,17 +31,19 @@ var get_files = function(req, res, next) {
 			}
 			var files = [];
 			for(var i = 0; i < output.results.length; i++) {
-				files.push(output.results[i].obj);	
+				files.push(output.results[i].obj);
 			}
 			return res.json({items: files});
 		});
 	} else {
-		  File.find(condition).sort({name: 1}).exec(function(err, files) {
-			if (err) {
-				console.log(err);
-				return res.json({error: 1});
-			}
-			return res.json({items: files});
+		File.count(condition, function(err, count) {
+			File.find(condition).sort(sort).skip(skip).limit(limit).exec(function(err, files) {
+				if (err) {
+					console.log(err);
+					return res.json({error: 1});
+				}
+				return res.json({items: files, count_all: count});
+			});
 		});
 	}
 }

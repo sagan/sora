@@ -1,3 +1,47 @@
-<div>
-	<p class='lead'>Well to Dashboard. Get startted here.</p>	
+<div class="row" ng-controller="DashboardController">
+	<div class="col-lg-4">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{"Welcome" | translate}}</h3>
+			</div>
+			<div class="panel-body">
+				<p>{{config.site_description}}</p>
+				<p>{{"To start, click the 'Files' or 'Tags', or browser the latest files in the right." | translate}}</p>
+			</div>
+			<div class="panel-footer">by <a target="_blank" href="{{config.admin_url}}">{{config.admin_name}}</a></div>
+		</div>
+	</div>
+	<div class="col-lg-8">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{"Latest Files" | translate}}</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table table-bordered table-fixed-columns-width">
+					<thead>
+						<tr>
+							<th width="20%">{{"Filename" | translate}}</th>
+							<th width="20%">{{"Size" | translate}}</th>
+							<th width="40%">{{"Tags" | translate}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="file in files | filter: filter">
+							<td>
+								<span><a href="file/{{file._id}}">{{file.name}}</a></span>
+							</td>
+							<td>
+								<span>{{file.size}}</span>
+							</td>
+							<td>
+								<ul class="list-inline">
+									<li ng-repeat="tag in file.tags"><span><a href='{{get_tag_url(tag)}}'>{{tag}}</a></span><span ng-if='$index != file.tags.length -1'>,</span></li>
+								</ul>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>

@@ -1,5 +1,5 @@
 <div ng-controller="FileController">
-	<h2>File {{file.name}}</h2>
+	<h2>{{"File" | translate}} {{file.name}}</h2>
 	<table class="table table-bordered table-fixed-columns-width">
 			<thead>
 				<tr>
@@ -30,6 +30,16 @@
 					</td>
 					<td>
 						<span>{{file.modified}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span>{{"Tags" | translate}}</span>
+					</td>
+					<td>
+						<ul class="list-inline">
+							<li ng-repeat="tag in file.tags"><span><a href='{{get_tag_url(tag)}}'>{{tag}}</a></span><span ng-if='$index != file.tags.length -1'>,</span></li>
+						</ul>
 					</td>
 				</tr>
 				<tr>
