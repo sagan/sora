@@ -17,6 +17,9 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 	}).when('/file/:id', {
 		title: "File",
 		templateUrl: 'templates/file.html'
+	}).when('/about', {
+		title: "About",
+		templateUrl: 'templates/about.html'
 	}).when('/help', {
 		title: "Help",
 		templateUrl: 'templates/help.html'

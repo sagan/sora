@@ -54,6 +54,7 @@ app.get("/tags", app_route);
 app.get("/files", app_route);
 app.get("/config", app_route);
 app.get("/help", app_route);
+app.get("/about", app_route);
 app.get("/dashboard", app_route);
 app.get("/file/:id", app_route);
 
