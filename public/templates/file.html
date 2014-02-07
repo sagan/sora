@@ -37,8 +37,9 @@
 						<span>{{"Operations" | translate}}</span>
 					</td>
 					<td>
-						<ul class="list-inline" >
-							<li><button  class="btn btn-primary" ng-click="download()"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</button></button></li>
+						<ul class="list-inline">
+							<li><button  class="btn btn-primary" ng-click="download()"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</button></li>
+							<li><a href="{{raw_url}}" clip-copy="raw_url">{{'Copy Download Link' | translate}}</a></li>
 						</ul>
 					</td>
 				</tr>

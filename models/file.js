@@ -6,10 +6,11 @@ var file_scheme = new mongoose.Schema({
 	sha1:  String,
 	modified:  Date,
 	path:  String,
-	database:  String,
+	library:  String,
 	mime:  String,
 	size:  Number,
 	note: String,
+	tags: [String]
 });
 
 module.exports = file_scheme;

@@ -3,6 +3,7 @@
 	"Dashboard": "ホームページ",
 	"Download": "ダウンロード",
 	"Files": "ファイル",
+	"File": "ファイル",
 	"Tags": "标签",
 	"Submit": "提出する",
 	"Filename": "ファイル名",
@@ -19,5 +20,6 @@
 	"Help": "ヘルプ",
 	"Search": "検索",
 	"More": "もっと",
+	"Copy Download Link": "ダウンロードURLをコピーする",
 	"FOO": "This is a paragraph"
 }

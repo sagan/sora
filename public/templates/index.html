@@ -13,7 +13,8 @@
 	</head>
 	<body ng-cloak>
 		<div class="container">
-			<h1><a href="#/dashboard">{{config.sitename}}</a></h1>
+			<noscript><h1><a href="dashboard">Sora</a></h1><p class="lead">This site needs Javascript to work. Please enable Javascript and reload.</p></noscript>
+			<h1><a href="#/dashboard" ng-bind="config.sitename"></a></h1>
 			<div ng-include='"templates/navibar.html"'></div>
 			<div ng-view></div>
 		</div>
@@ -21,6 +22,8 @@
 		<script type="text/javascript" src="components/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="libs/angular/angular-route.min.js?v=1.2.11"></script>
 		<script type="text/javascript" src="libs/angular/angular-animate.min.js?v=1.2.11"></script>
+		<script type="text/javascript" src="components/zeroclipboard/ZeroClipboard.min.js"></script>
+		<script type="text/javascript" src="components/ng-clip/src/ngClip.js"></script>
 		<script type="text/javascript" src="components/angular-translate/angular-translate.min.js"></script>
 		<script type="text/javascript" src="components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
 		<script type="text/javascript" src="libs/highlightjs/highlight.min.js"></script>

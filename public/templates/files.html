@@ -1,35 +1,44 @@
 <div ng-controller="FilesController">
-	<h2>{{"Files" | translate}}</h2>
+	<h2>{{"Files" | translate}}
+		<span ng-if="condition.tags">{{"Tags" | translate}}: {{condition.tags}}</span>
+		<span ng-if="condition.search">{{"Search" | translate}}: {{condition.search}}</span>
+	</h2>
 	<table class="table table-bordered table-fixed-columns-width">
 			<thead>
 				<tr>
 					<th width="30%">{{"Filename" | translate}}</th>
 					<th width="20%">{{"Size" | translate}}</th>
-					<th width="50%">{{"Modified" | translate}}</th>
+					<th width="20%">{{"Modified" | translate}}</th>
+					<th width="30%">{{"Tags" | translate}}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr ng-repeat="file in files | filter: filter">
 					<td>
-						<span><a href="#/file/{{file._id}}">{{file.name}}</a></span>
+						<span><a href="file/{{file._id}}">{{file.name}}</a></span>
 					</td>
 					<td>
 						<span>{{file.size}}</span>
 					</td>
 					<td>
-						<span>{{file.modified}}</span></td>
+						<span>{{file.modified}}</span>
+					</td>
+					<td>
+						<ul class="list-inline">
+							<li ng-repeat="tag in file.tags"><span><a href='{{get_tag_url(tag)}}'>{{tag}}</a></span></li>
+						</ul>
 					</td>
 				</tr>
 			</tbody>
 	</table>
-	<form class="form-inline">
-			<div class="form-group">
-				<div class="input-group" style="">
-					<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
-					<span class="input-group-btn">
-						<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
-					</span>
-				</div>
+	<form class="form">
+		<div class="form-group" style="">
+			<div class="input-group" style="">
+				<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
+				<span class="input-group-btn">
+					<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
+				</span>
 			</div>
-		</form>
+		</div>
+	</form>
 </div>

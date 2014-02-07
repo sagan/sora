@@ -11,7 +11,7 @@
 			<tbody>
 				<tr ng-repeat="tag in tags | filter: filter">
 					<td>
-						<span>{{tag.name}}</span>
+						<span><span><a href='{{get_tag_url(tag.name)}}'>{{tag.name}}</a></span></span>
 					</td>
 					<td>
 						<span>{{tag.canonical}}</span>
@@ -22,14 +22,14 @@
 				</tr>
 			</tbody>
 	</table>
-	<form class="form-inline">
-			<div class="form-group">
-				<div class="input-group" style="">
-					<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
-					<span class="input-group-btn">
-						<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
-					</span>
-				</div>
+	<form class="form">
+		<div class="form-group">
+			<div class="input-group" style="">
+				<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
+				<span class="input-group-btn">
+					<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
+				</span>
 			</div>
-		</form>
+		</div>
+	</form>
 </div>

@@ -2,11 +2,16 @@
 /* angular-bootstrap css http://angular-ui.github.io/bootstrap/ */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
+/* make main scroll bar always visible to avoid main content width change*/
+html {
+	overflow: -moz-scrollbars-vertical; 
+	overflow-y: scroll;
+}
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  
 }
 
 a {
-  color: #00B7FF;
+  cursor: pointer;
 }

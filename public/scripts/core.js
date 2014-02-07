@@ -1,7 +1,7 @@
 
 'use strict';
 
-var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs', 'pascalprecht.translate']).config(function($routeProvider, $locationProvider) {
+var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs', 'pascalprecht.translate', 'ngClipboard']).config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/dashboard', {
 		title: "Dashboard",
 		templateUrl: 'templates/dashboard.html'
@@ -21,7 +21,7 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 		title: "Help",
 		templateUrl: 'templates/help.html'
 	}).otherwise({redirectTo: '/dashboard'});
-	$locationProvider.html5Mode(false);
+	$locationProvider.html5Mode(true);
 })
 .config(['$translateProvider', function($translateProvider) {
 	$translateProvider.useStaticFilesLoader({
@@ -29,6 +29,9 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 		suffix: '.json'
 	});
 	$translateProvider.preferredLanguage('en');
+}])
+.config(['ngClipProvider', function(ngClipProvider) {
+	ngClipProvider.setPath("components/zeroclipboard/ZeroClipboard.swf");
 }])
 .directive('integer', function() {
 	var INTEGER_REGEXP = /^\-?\d+$/;
