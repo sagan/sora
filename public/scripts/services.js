@@ -94,6 +94,10 @@ app.factory('FileService', function($q, $http, AppService) {
 		return url;
 	};
 	
+	var get_files_list_tag_url = function(tagname) {
+		return get_files_list_url({tags: tagname});
+	};
+	
 	var get_files = function(condition) {
 		var defer = $q.defer();
 		var url = get_files_list_url(condition);
@@ -114,6 +118,7 @@ app.factory('FileService', function($q, $http, AppService) {
 	FileService.get_file = get_file;
 	FileService.get_file_raw = get_file_raw;
 	FileService.get_files_list_url = get_files_list_url;
+	FileService.get_files_list_tag_url = get_files_list_tag_url;
 	FileService.get_files = get_files;
 	
 	return FileService;

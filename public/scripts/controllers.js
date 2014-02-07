@@ -32,9 +32,7 @@ app.controller("NavibarController", function($scope, $location, FileService) {
 app.controller("TagsController", function($scope, TagService, FileService) {
 	$scope.tags = TagService.tags;
 	
-	$scope.get_tag_url = function(tagname) {
-		return FileService.get_files_list_url({tags: tagname});
-	};
+	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
 });
 
@@ -47,9 +45,7 @@ app.controller("FilesController", function($scope, $routeParams, FileService) {
 	$scope.count_all = 0;
 	$scope.current_page = 1;
 	
-	$scope.get_tag_url = function(tagname) {
-		return FileService.get_files_list_url({tags: tagname});
-	};
+	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
 	$scope.$watch("current_page", function() {
 		var query = angular.copy($scope.condition);
@@ -67,6 +63,8 @@ app.controller("FilesController", function($scope, $routeParams, FileService) {
 app.controller("FileController", function($modal, $scope, $window, $routeParams, $location, FileService) {
 		
 	$scope.id = $routeParams.id;
+	
+	$scope.get_tag_url = FileService.get_files_list_tag_url;
 
 	$scope.download = function() {
 		$window.open($scope.raw_url);
@@ -84,9 +82,7 @@ app.controller("FileController", function($modal, $scope, $window, $routeParams,
 
 app.controller("DashboardController", function($scope, $routeParams, FileService) {
 
-	$scope.get_tag_url = function(tagname) {
-		return FileService.get_files_list_url({tags: tagname});
-	};
+	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
 	FileService.get_files({sort: "modified", order: 1, limit: 10}).then(function(data) {
 		$scope.files = data.items;
