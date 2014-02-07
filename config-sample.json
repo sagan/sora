@@ -2,5 +2,5 @@
 	"sitename": "Sora",
 	"sitedescription": "一个资源管理系统",
 	"mongodb_link": "mongodb://localhost/sora",
-	"database_path": "/tmp/database"
+	"library_path": "/tmp/database"
 }
