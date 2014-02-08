@@ -57,9 +57,11 @@ var start_app = function() {
 		res.json({
 			locale: req.locale,
 			site_name: config.site_name,
+			site_tagline: config.site_tagline,
 			site_description: config.site_description,
 			admin_name: config.admin_name,
 			admin_url: config.admin_url,
+			disqus_shortname: config.disqus_shortname,
 			version: manifest.version,
 		});
 	});

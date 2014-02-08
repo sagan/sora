@@ -3,7 +3,9 @@ app.factory('AppService', function($rootScope, $q, $location, $http) {
 	var AppService = {};
 	
 	var config = {};
-	var meta = {};
+	var meta = {
+		loaded: false
+	};
 	
 	meta.root_url = $location.protocol() + '://' +  $location.host() + ($location.port() != ( $location.protocol() == "http" ? 80 : 443 ) ? ':' + $location.port() : '') + $("base").attr("href");
 	meta.api_root = "api/";
@@ -11,10 +13,15 @@ app.factory('AppService', function($rootScope, $q, $location, $http) {
 	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
 		if( current.$$route )
 			meta.page_title = current.$$route.title;
+			meta.page_id = $location.path();
 	});
 	
 	$http({method: 'GET', url: meta.api_root + 'config'}).success(function(data, status, headers, httpconfig) {
 		angular.copy(data, config);
+		if( !config.site_tagline )
+			config.site_tagline = "version " + config.version;
+		window.disqus_shortname = config.disqus_shortname;
+		meta.loaded = true;
 	}).error(function(data, status, headers, config) {
 
 	});

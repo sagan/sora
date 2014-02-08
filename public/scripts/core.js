@@ -1,7 +1,7 @@
 
 'use strict';
 
-var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs', 'pascalprecht.translate', 'ngClipboard']).config(function($routeProvider, $locationProvider) {
+var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs', 'pascalprecht.translate', 'ngClipboard', 'ngDisqus']).config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/dashboard', {
 		title: "Dashboard",
 		templateUrl: 'templates/dashboard.html'
@@ -26,7 +26,7 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 		title: "Help",
 		templateUrl: 'templates/help.html'
 	}).otherwise({redirectTo: '/dashboard'});
-	$locationProvider.html5Mode(true);
+	$locationProvider.html5Mode(true).hashPrefix('!');
 })
 .config(['$translateProvider', function($translateProvider) {
 	$translateProvider.useStaticFilesLoader({

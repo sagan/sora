@@ -1,11 +1,13 @@
 {
 	"site_name": "Sora",
+	"site_tagline": "願いが叶う場所",
 	"site_description": "这里提供一些ACG资源下载, 目前主要是轻小说和Galgame剧本.",
 	"server_port": 3000,
 	"server_ip": "0.0.0.0",
 	"server_ssl": false,
 	"server_ssl_cert": "/path/to/your/ssl/cert/file",
 	"server_ssl_key": "/path/to/your/ssl/key/file",
+	"disqus_shortname": "",
 	"admin_name": "小野大神",
 	"admin_url": "https://oogami.name/",
 	"mongodb_link": "mongodb://localhost/sora",

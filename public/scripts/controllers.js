@@ -1,5 +1,5 @@
 
-app.controller("AppController", function($scope, $modal, $location, $window, $element, $translate, AppService) {
+app.controller("AppController", function($scope, $modal, $location, $window, $element, $translate, $compile, AppService) {
 
 	$scope.config = AppService.config;
 	$scope.meta = AppService.meta;
@@ -15,6 +15,19 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 	$scope.$watch("config.locale", function() {
 		$translate.uses($scope.config.locale);
 	});
+	
+	// app loaded, init
+	$scope.$watch("meta.loaded", function() {
+		if( $scope.meta.loaded ) {
+			if( $scope.config.disqus_shortname ) {
+				// disqus enabled, load it
+				var disqus_pane = $('#disqus');//JQuery request for the app pane element.
+				disqus_pane.html('<div disqus="meta.page_id"></div>');//The dynamically loaded data
+				$compile(disqus_pane.contents())($scope);
+			}
+		}
+	});
+
 });
 
 app.controller("NavibarController", function($scope, $location, FileService) {
