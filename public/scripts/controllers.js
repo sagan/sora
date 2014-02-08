@@ -45,27 +45,53 @@ app.controller("TagsController", function($scope, TagService, FileService) {
 	
 });
 
-app.controller("FilesController", function($scope, $routeParams, FileService) {
+app.controller("FilesController", function($scope, $routeParams, $location, FileService) {
 	$scope.files = [];
 	
 	$scope.condition = $routeParams;
 	
-	$scope.per_page = 20;
-	$scope.count_all = 0;
-	$scope.current_page = 1;
+	$scope.default_per_page = 20;
+	$scope.per_page = $routeParams.limit || $scope.default_per_page;
+	$scope.current_page = Math.floor( ($routeParams.skip || 0) / $scope.per_page) + 1;
+	$scope.count_all = $scope.current_page * $scope.per_page;
 	
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
-	$scope.$watch("current_page", function() {
+	var load_files = function() {
 		var query = angular.copy($scope.condition);
 		query.limit = $scope.per_page;
 		query.skip = ($scope.current_page - 1 ) * $scope.per_page;
-		
+		console.log("query ", query);
 		FileService.get_files(query).then(function(data) {
 			$scope.files = data.items;
 			$scope.count_all = data.count_all || data.items.length;
+			
+			if( query.skip != 0 || query.limit != $scope.default_per_page ) {
+				var params = $location.search();
+				params.skip = query.skip;
+				params.limit = query.limit;
+				$location.search(params);
+			} else {
+				var params = $location.search();
+				delete params.skip;
+				delete params.limit;
+				$location.search(params);
+			}
 		});
+	};
+	
+	$scope.$watch("current_page", load_files);
+	
+	/*
+	$scope.$on('$routeUpdate', function(){
+		console.log("args", arguments);
+		if( Object.keys($location.search()).length == 0 ) {
+			$scope.current_page = 1;
+			$scope.per_page = $scope.default_per_page;
+		}
+		load_files();	
 	});
+	*/
 	
 });
 

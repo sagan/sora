@@ -3,6 +3,17 @@
 		<span ng-if="condition.tags">{{"Tags" | translate}}: {{condition.tags}}</span>
 		<span ng-if="condition.search">{{"Search" | translate}}: {{condition.search}}</span>
 	</h2>
+	<pagination rotate="false" boundary-links="true" max-size="10" total-items="count_all" page="current_page" items-per-page="per_page"></pagination>
+	<form class="form">
+		<div class="form-group" style="">
+			<div class="input-group" style="">
+				<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
+				<span class="input-group-btn">
+					<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
+				</span>
+			</div>
+		</div>
+	</form>
 	<table class="table table-bordered table-fixed-columns-width">
 			<thead>
 				<tr>
@@ -35,15 +46,4 @@
 				</tr>
 			</tbody>
 	</table>
-	<pagination rotate="false" boundary-links="true" max-size="10" total-items="count_all" page="current_page" items-per-page="per_page"></pagination>
-	<form class="form">
-		<div class="form-group" style="">
-			<div class="input-group" style="">
-				<input class="form-control" ng-model="filter" style="width: 100%;" placeholder='{{"Filter" | translate}}' />
-				<span class="input-group-btn">
-					<button class="btn btn-default" ng-click='filter=""'  type="button"><span class="glyphicon glyphicon-remove"></span></button>
-				</span>
-			</div>
-		</div>
-	</form>
 </div>
