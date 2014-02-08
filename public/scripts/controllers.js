@@ -65,6 +65,9 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 		FileService.get_files(query).then(function(data) {
 			$scope.files = data.items;
 			$scope.count_all = data.count_all || data.items.length;
+			if( $scope.files.length > $scope.per_page ) {
+				$scope.per_page = $scope.files.length;
+			}
 			
 			if( query.skip != 0 || query.limit != $scope.default_per_page ) {
 				var params = $location.search();
