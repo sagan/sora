@@ -5,6 +5,7 @@
 
 var express = require('express');
 var http = require('http');
+var https = require('https');
 var path = require('path');
 var locale = require('locale');
 var config = require('./config');
@@ -69,9 +70,18 @@ var start_app = function() {
 	app.get("/api/file/:id/download", file_controller.download_file);
 	app.get("/api/file/:id/download/*", file_controller.download_file);
 	
-	http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
-		console.log("Express server listening on port " + app.get('port') + ", ip " + app.get('ip'));
-	});
+	if( config.server_ssl ) {
+		https.createServer({
+			key: fs.readFileSync(config.server_ssl_key),
+			cert: fs.readFileSync(config.server_ssl_cert)
+		}, app).listen(app.get('port'), app.get('ip'), function(){
+			console.log("Express server (ssl) listening on port " + app.get('port') + ", ip " + app.get('ip'));
+		});
+	} else {
+		http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
+			console.log("Express server listening on port " + app.get('port') + ", ip " + app.get('ip'));
+		});
+	}
 };
 
 database.init(config, function() {
