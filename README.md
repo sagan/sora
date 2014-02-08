@@ -20,7 +20,7 @@ Install
 Demo
 ------
 
-[https://sakura-paris.org/](Demo)
+[Demo](https://sakura-paris.org/)
 
 
 
