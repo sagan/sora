@@ -30,11 +30,23 @@ app.factory('TagService', function($q, $http, AppService) {
 	var TagService = {};
 	
 	var config = AppService.config;
+	
 	var tags = [];
 	
+	var colors = ["red", "blue", "cyan", "green", "yellow", "gray"];
+	
+	var process_tag_colors = function() {
+		for(var i =0; i < tags.length; i++) {
+			var index = Math.floor(Math.random() * (colors.length - 1 - 0 + 1) + 0);
+			tags[i].color = colors[index];
+		}
+	};
+	
 	$http({method: 'GET', url: AppService.meta.api_root + 'tags'}).success(function(data, status, headers, httpconfig) {
-		if( !data.error )
+		if( !data.error ) {
 			tags.push.apply(tags, data.items);
+			process_tag_colors();
+		}
 	}).error(function(data, status, headers, httpconfig) {
 
 	});
@@ -75,13 +87,18 @@ app.factory('FileService', function($q, $http, AppService) {
 		return defer.promise;
 	};
 	
-	var get_file_raw = function(id, name) {
-		var defer = $q.defer();
+	var get_file_raw_url = function(id, name) {
 		var url = AppService.meta.root_url + AppService.meta.api_root + "file/" + id + "/raw";
 		if(name)
 			url += '/' +  encodeURIComponent(name);
-		defer.resolve(url);
-		return defer.promise;
+		return url;
+	};
+	
+	var get_file_download_url = function(id, name) {
+		var url = AppService.meta.root_url + AppService.meta.api_root + "file/" + id + "/download";
+		if(name)
+			url += '/' +  encodeURIComponent(name);
+		return url;
 	};
 	
 	// return relative url
@@ -116,7 +133,8 @@ app.factory('FileService', function($q, $http, AppService) {
 	FileService.files = files;
 	FileService.meta = meta;
 	FileService.get_file = get_file;
-	FileService.get_file_raw = get_file_raw;
+	FileService.get_file_raw_url = get_file_raw_url;
+	FileService.get_file_download_url = get_file_download_url;
 	FileService.get_files_list_url = get_files_list_url;
 	FileService.get_files_list_tag_url = get_files_list_tag_url;
 	FileService.get_files = get_files;

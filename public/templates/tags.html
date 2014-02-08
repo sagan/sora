@@ -1,27 +1,5 @@
 <div ng-controller="TagsController">
 	<h2>{{"Tags" | translate}}</h2>
-	<table class="table table-bordered table-fixed-columns-width">
-			<thead>
-				<tr>
-					<th width="30%">{{"Tagname" | translate}}</th>
-					<th width="20%">{{"Canonical" | translate}}</th>
-					<th width="50%">{{"Note" | translate}}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="tag in tags | filter: filter">
-					<td>
-						<span><span><a href='{{get_tag_url(tag.name)}}'>{{tag.name}}</a></span></span>
-					</td>
-					<td>
-						<span>{{tag.canonical}}</span>
-					</td>
-					<td>
-						<span>{{tag.note}}</span></td>
-					</td>
-				</tr>
-			</tbody>
-	</table>
 	<form class="form">
 		<div class="form-group">
 			<div class="input-group" style="">
@@ -32,4 +10,35 @@
 			</div>
 		</div>
 	</form>
+  <tabset>
+    <tab heading='{{"Tag Cloud" | translate}}'>
+    	<div style="margin-top:10px">
+	    	<ul class="list-inline">
+					<li ng-repeat="tag in tags | filter: filter"><a class="label label-tag label-{{color_classes[tag.color]}}" tooltip='{{tag.note}}' href='{{get_tag_url(tag.name)}}'>{{tag.name}}</a></li>
+				</ul>
+			</div>
+    </tab>
+    <tab heading='{{"Tag List" | translate}}'>
+    	<div style="margin-top:10px">
+			  <table class="table table-bordered table-fixed-columns-width">
+					<thead>
+						<tr>
+							<th width="40%">{{"Tagname" | translate}}</th>
+							<th width="60%">{{"Note" | translate}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="tag in tags | filter: filter">
+							<td>
+								<span><span><a href='{{get_tag_url(tag.name)}}'>{{tag.name}}</a></span></span>
+							</td>
+							<td>
+								<span>{{tag.note}}</span></td>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+    	</div>
+    </tab>
+  </tabset>
 </div>

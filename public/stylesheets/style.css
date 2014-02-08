@@ -2,6 +2,7 @@
 /* angular-bootstrap css http://angular-ui.github.io/bootstrap/ */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
+
 /* make main scroll bar always visible to avoid main content width change*/
 html {
 	overflow: -moz-scrollbars-vertical; 
@@ -14,4 +15,16 @@ body {
 
 a {
   cursor: pointer;
+}
+
+/* image fix parent width */
+div[ng-controller="FileController"] img {
+	max-width:100%;	
+}
+
+/* tag cloud tag based on bootstrap label */
+.label-tag {
+   display: inline-block;
+   font-size: 100%;
+   margin-bottom: 0.3em;
 }

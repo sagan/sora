@@ -26,6 +26,14 @@
 				</tr>
 				<tr>
 					<td>
+						<span>{{"File Type" | translate}}</span>
+					</td>
+					<td>
+						<span>{{file.mime}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
 						<span>{{"Modified" | translate}}</span>
 					</td>
 					<td>
@@ -48,11 +56,25 @@
 					</td>
 					<td>
 						<ul class="list-inline">
-							<li><button  class="btn btn-primary" ng-click="download()"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</button></li>
-							<li><a href="{{raw_url}}" clip-copy="raw_url">{{'Copy Download Link' | translate}}</a></li>
+							<li><a class="btn btn-primary" target="_blank" href="{{raw_url}}"><span class="glyphicon glyphicon-file"></span> {{'Open File' | translate}}</a></li>
+							<li><a class="btn btn-primary" target="_blank" href="{{download_url}}"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</a></li>
+							<li><a class="btn btn-info" href="{{raw_url}}" clip-copy="raw_url">{{'Copy Download Link' | translate}}</a></li>
 						</ul>
 					</td>
 				</tr>
 			</tbody>
 	</table>
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<h3 class="panel-title">{{"Preview" | translate}}</h3>
+		</div>
+		<div class="panel-body">
+			<div ng-if='preview_type() == "image"'>
+				<a href='{{raw_url}}' target="_blank"><img src="{{raw_url}}" /></a>
+			</div>
+			<div ng-if='!preview_type()'>
+				<p>{{"Not Available" | translate}}</p>
+			</div>
+		</div>
+	</div>
 </div>

@@ -4,9 +4,11 @@ var async = require('async');
 var path = require('path');
 var util = require('util');
 var mongoose = require('mongoose');
+var mime = require('mime');
 var db = mongoose.connection;
 
 var config = require('../config');
+var database = require('../database');
 
 var Tag = db.model('Tag');
 var File = db.model('File');
@@ -22,10 +24,29 @@ var process_file = function(file, stats, tags) {
 	var file_tags = filesegs;
 	
 	File.findOne({path: relative_path}, function(err, item) {
+		var get_new_file = function(old) {
+			var file = old || new File({path: relative_path});
+			file.name = filename;
+			file.size = stats.size;
+			file.modified = stats.mtime;
+			file.tags = file_tags;
+			file.mime = mime.lookup(filename);
+			file.scheme_version = database.SCHEME_VERSION_FILE;
+			return file;
+		};
 		if( !item ) {
-			Files.insert({name: filename, path: relative_path, size: stats.size, modified: stats.mtime, tags: file_tags}, function(err) {
+			var create_file = get_new_file();
+			create_file.save(function(err) {
 				
 			});
+		} else {
+			item.scheme_version = item.scheme_version || 0;
+			if(item.scheme_version < database.SCHEME_VERSION_FILE ) {
+				var new_file = get_new_file(item);
+				new_file.save(function(err) {
+				
+				});
+			}
 		}
 	});
 	
@@ -70,10 +91,24 @@ var scan_dir = function(dir, tags, result_callback) {
 var process_tags = function(tags) {
 	async.eachLimit(tags, 3, function(tag, callback){
 		Tag.findOne({name: tag}, function(err, item) {
+			var get_new_tag = function(old) {
+				var new_tag = old || new Tag({name: tag});
+				new_tag.scheme_version = database.SCHEME_VERSION_TAG;
+				return new_tag;
+			};
 			if( !item ) {
-				Tags.insert({name: tag}, function(err) {
+				var create_tag = get_new_tag();
+				create_tag.save(function(err) {
 				
-				});	
+				});
+			} else {
+				item.scheme_version = item.scheme_version || 0;
+				if(item.scheme_version < database.SCHEME_VERSION_TAG ) {
+					var new_tag = get_new_tag(item);
+					new_tag.save(function(err) {
+				
+					});
+				}
 			}
 		});
 		callback();

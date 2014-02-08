@@ -6,24 +6,13 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose');
 var locale = require('locale');
 var config = require('./config');
 var manifest = require('./package.json');
-var tag_controller = require('./controllers/tag');
-var file_controller = require('./controllers/file');
-var library = require('./library');
+var database = require('./database');
 var app = express();
+
 var supported = ['en', 'ja', 'zh_CN', 'zh_TW'];
-
-mongoose.connect(config.mongodb_link);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback () {
-	library.start_daemon();
-});
-
-
 app.use(locale(supported));
 	
 app.configure(function(){
@@ -46,34 +35,47 @@ app.configure('development', function(){
 	app.use(express.errorHandler());
 });
 
-var app_route = function(req, res) {
-	res.render('index');
-};
-app.get('/', app_route);
-app.get("/tags", app_route);
-app.get("/files", app_route);
-app.get("/config", app_route);
-app.get("/help", app_route);
-app.get("/about", app_route);
-app.get("/dashboard", app_route);
-app.get("/file/:id", app_route);
+var start_app = function() {
+	var tag_controller = require('./controllers/tag');
+	var file_controller = require('./controllers/file');
 
-app.get('/api/config', function(req, res){
-	res.json({
-		locale: req.locale,
-		site_name: config.site_name,
-		site_description: config.site_description,
-		admin_name: config.admin_name,
-		admin_url: config.admin_url,
-		version: manifest.version,
+	var app_route = function(req, res) {
+		res.render('index');
+	};
+	app.get('/', app_route);
+	app.get("/tags", app_route);
+	app.get("/files", app_route);
+	app.get("/config", app_route);
+	app.get("/help", app_route);
+	app.get("/about", app_route);
+	app.get("/dashboard", app_route);
+	app.get("/file/:id", app_route);
+	
+	app.get('/api/config', function(req, res){
+		res.json({
+			locale: req.locale,
+			site_name: config.site_name,
+			site_description: config.site_description,
+			admin_name: config.admin_name,
+			admin_url: config.admin_url,
+			version: manifest.version,
+		});
 	});
-});
-app.get("/api/tags", tag_controller.get_tags);
-app.get("/api/files", file_controller.get_files);
-app.get("/api/file/:id", file_controller.get_file);
-app.get("/api/file/:id/raw", file_controller.raw_file);
-app.get("/api/file/:id/raw/*", file_controller.raw_file);
+	app.get("/api/tags", tag_controller.get_tags);
+	app.get("/api/files", file_controller.get_files);
+	app.get("/api/file/:id", file_controller.get_file);
+	app.get("/api/file/:id/raw", file_controller.raw_file);
+	app.get("/api/file/:id/raw/*", file_controller.raw_file);
+	app.get("/api/file/:id/download", file_controller.download_file);
+	app.get("/api/file/:id/download/*", file_controller.download_file);
+	
+	http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
+		console.log("Express server listening on port " + app.get('port') + ", ip " + app.get('ip'));
+	});
+};
 
-http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
-	console.log("Express server listening on port " + app.get('port') + ", ip " + app.get('ip'));
+database.init(config, function() {
+	var library = require('./library');
+	library.start_daemon();
+	start_app();
 });

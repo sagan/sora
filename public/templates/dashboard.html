@@ -21,7 +21,8 @@
 					<thead>
 						<tr>
 							<th width="20%">{{"Filename" | translate}}</th>
-							<th width="20%">{{"Size" | translate}}</th>
+							<th width="10%">{{"Size" | translate}}</th>
+							<th width="10%">{{"File Type" | translate}}</th>
 							<th width="40%">{{"Tags" | translate}}</th>
 						</tr>
 					</thead>
@@ -32,6 +33,9 @@
 							</td>
 							<td>
 								<span>{{file.size}}</span>
+							</td>
+							<td>
+								<span>{{file.mime}}</span>
 							</td>
 							<td>
 								<ul class="list-inline">

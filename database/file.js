@@ -10,6 +10,7 @@ var file_scheme = new mongoose.Schema({
 	mime:  String,
 	size:  Number,
 	note: String,
+	scheme_version: Number,
 	tags: [String]
 });
 

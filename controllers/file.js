@@ -1,14 +1,9 @@
 
 var path = require('path');
 var mongoose = require('mongoose');
-var textSearch = require('mongoose-text-search');
-var db = mongoose.connection;
 var config = require('../config');
-
-var file_scheme = require('../models/file');
-file_scheme.plugin(textSearch);
-file_scheme.index({ name: 'text' });
-var File = db.model('File', file_scheme);
+var db = mongoose.connection;
+var File = db.model('File');
 
 var get_files = function(req, res, next) {
 	var condition = {};
@@ -46,7 +41,7 @@ var get_files = function(req, res, next) {
 			});
 		});
 	}
-}
+};
 
 var get_file = function(req, res, next) {
   File.find({_id: req.params.id}, function(err, files) {
@@ -56,7 +51,7 @@ var get_file = function(req, res, next) {
 		}
 		return res.json({item: files[0]});
 	});
-}
+};
 
 var raw_file = function(req, res, next) {
   File.find({_id: req.params.id}, function(err, files) {
@@ -68,14 +63,17 @@ var raw_file = function(req, res, next) {
 		if( !file.path ) {
 			return res.send(403, 'File Not Available');
 		}
-		var sendheader = 'attachment;';
-		// unfortunately the filename do not support non ASCII chars.
-		//sendheader += ' filename=' + file.name;
-		res.set("Content-Disposition", sendheader);
 		return res.sendfile(path.join(config.library_path, file.path));
 	});
-}
+};
+
+var download_file = function(req, res, next) {
+	var sendheader = 'attachment;';
+	res.set("Content-Disposition", sendheader);
+	return raw_file(req, res, next);
+};
 
 exports.get_files = get_files;
 exports.get_file = get_file;
 exports.raw_file = raw_file;
+exports.download_file = download_file;

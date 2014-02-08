@@ -7,7 +7,8 @@
 			<thead>
 				<tr>
 					<th width="30%">{{"Filename" | translate}}</th>
-					<th width="20%">{{"Size" | translate}}</th>
+					<th width="10%">{{"Size" | translate}}</th>
+					<th width="10%">{{"File Type" | translate}}</th>
 					<th width="20%">{{"Modified" | translate}}</th>
 					<th width="30%">{{"Tags" | translate}}</th>
 				</tr>
@@ -19,6 +20,9 @@
 					</td>
 					<td>
 						<span>{{file.size}}</span>
+					</td>
+					<td>
+						<span>{{file.mime}}</span>
 					</td>
 					<td>
 						<span>{{file.modified}}</span>

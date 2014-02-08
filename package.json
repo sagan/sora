@@ -15,6 +15,7 @@
     "jade": "*",
     "locale": "*",
     "async": "*",
+    "mime": "*",
     "socket.io": "*",
     "mongoose-text-search": "*",
     "mongoose": "*",
