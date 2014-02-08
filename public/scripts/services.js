@@ -5,7 +5,7 @@ app.factory('AppService', function($rootScope, $q, $location, $http) {
 	var config = {};
 	var meta = {};
 	
-	meta.root_url = $location.protocol() + '://' +  $location.host() + ($location.port() != 80 ? ':' + $location.port() : '') + $("base").attr("href");
+	meta.root_url = $location.protocol() + '://' +  $location.host() + ($location.port() != ( $location.protocol() == "http" ? 80 : 443 ) ? ':' + $location.port() : '') + $("base").attr("href");
 	meta.api_root = "api/";
 	
 	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
