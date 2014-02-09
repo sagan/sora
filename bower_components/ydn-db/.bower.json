@@ -1,0 +1,27 @@
+{
+  "name": "ydn-db",
+  "authors": [
+    "kyawtun@yathit.com"
+  ],
+  "description": "Javascript database module for IndexedDB, WebDatabase (WebSQL) and WebStorage (localStorage) storage mechanisms supporting version migration, advanced query and transaction workflow.",
+  "main": "jsc/ydn.db-npm-dev.js",
+  "keywords": [
+    "indexeddb",
+    "websql",
+    "database",
+    "storage"
+  ],
+  "license": "Apache License 2.0",
+  "homepage": "http://dev.yathit.com",
+  "version": "0.8.12",
+  "_release": "0.8.12",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.8.12",
+    "commit": "f62cf4221ca2b745181c60395cc98a5f4f87ea93"
+  },
+  "_source": "git://github.com/yathit/ydn-db.git",
+  "_target": "~0.8.12",
+  "_originalSource": "ydn-db",
+  "_direct": true
+}

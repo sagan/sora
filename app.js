@@ -65,6 +65,9 @@ var start_app = function() {
 			version: manifest.version,
 		});
 	});
+	app.get('/api/online', function(req, res){
+		res.send(204);
+	});
 	app.get("/api/tags", tag_controller.get_tags);
 	app.get("/api/files", file_controller.get_files);
 	app.get("/api/file/:id", file_controller.get_file);
