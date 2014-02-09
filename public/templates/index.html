@@ -2,8 +2,10 @@
 <html manifest="/app.appcache" ng-app="app" ng-controller="AppController">
 	<head>
 		<meta charset="utf-8"/>
+		<meta name="fragment" content="!">
 		<base href="/" />
 		<title ng-bind="title()"></title>
+		<meta name="description" content="{{config.site_description}}">
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css?v=3.0.3"/>
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap-theme.min.css?v=3.0.3"/>
 		<link rel="stylesheet" href="libs/highlightjs/default.min.css?v=8.0"/>
@@ -13,6 +15,11 @@
 		<!--<meta http-equiv="X-UA-Compatible" content="IE=9" />-->
 		<script type="text/javascript" src="components/jquery/jquery.min.js?v=2.1.0"></script>
 		<script type="text/javascript" src="libs/angular/angular.min.js?v=1.2.11"></script>
+		<script type="text/javascript">
+			// prerender flag, see https://prerender.io/
+			// automatically timeout after 20 seconds, do not to manually set it to true
+			window.prerenderReady = false;
+		</script>
 	</head>
 	<body ng-cloak>
 		<div class="container">

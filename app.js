@@ -16,6 +16,9 @@ var app = express();
 
 var supported = ['en', 'ja', 'zh_CN', 'zh_TW'];
 app.use(locale(supported));
+
+if( config.prerender_token )
+	app.use(require('prerender-node')).set('prerenderToken', config.prerender_token);
 	
 app.configure(function(){
 	app.set('port', config.server_port || process.env.PORT || 3000);

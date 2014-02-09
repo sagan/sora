@@ -8,6 +8,7 @@
 	"server_ssl_cert": "/path/to/your/ssl/cert/file",
 	"server_ssl_key": "/path/to/your/ssl/key/file",
 	"disqus_shortname": "",
+	"prerender_token": "",
 	"admin_name": "小野大神",
 	"admin_url": "https://oogami.name/",
 	"mongodb_link": "mongodb://localhost/sora",

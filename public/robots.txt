@@ -1,0 +1,10 @@
+
+User-Agent: *
+
+#Disallow: /files
+Disallow: /api/
+
+Disallow: /libs/
+Disallow: /components/
+Disallow: /stylesheets/
+Disallow: /scripts/

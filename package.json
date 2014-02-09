@@ -19,6 +19,7 @@
     "socket.io": "*",
     "mongoose-text-search": "*",
     "mongoose": "*",
-    "mongodb": "*"
+    "mongodb": "*",
+    "prerender-node": "~0.1.16"
   }
 }
