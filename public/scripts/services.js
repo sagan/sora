@@ -222,12 +222,25 @@ app.factory('TagService', function($q, $http, AppService, APIService) {
 	
 });
 
-app.factory('FileService', function($q, $http, AppService) {
+app.factory('FileService', function($q, $resource, $http, AppService) {
 	var FileService = {};
 	
 	var config = AppService.config;
 	var files = [];
 	var meta = {};
+	
+	/*
+	var File = $resource(AppService.meta.api_root + 'files/:id', { id: "@_id" }, {
+		list:{
+			isArray: true,
+			method: 'get',
+			transformResponse: function (data, headers) {
+				return JSON.parse(data).items; 
+			}
+		}
+	});
+	window.File = File;
+	*/
 	
 	$http({method: 'GET', url: AppService.meta.api_root + 'files'}).success(function(data, status, headers, httpconfig) {
 		if( !data.error ) {
@@ -303,6 +316,7 @@ app.factory('FileService', function($q, $http, AppService) {
 	FileService.get_files_list_url = get_files_list_url;
 	FileService.get_files_list_tag_url = get_files_list_tag_url;
 	FileService.get_files = get_files;
+	FileService.File = File;
 	
 	return FileService;
 	

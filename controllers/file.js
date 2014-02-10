@@ -5,7 +5,7 @@ var config = require('../config');
 var db = mongoose.connection;
 var File = db.model('File');
 
-var get_files = function(req, res, next) {
+var query = function(req, res, next) {
 	var condition = {};
 	if( req.query.tags )
 		condition.tags = req.query.tags;
@@ -43,13 +43,13 @@ var get_files = function(req, res, next) {
 	}
 };
 
-var get_file = function(req, res, next) {
-  File.find({_id: req.params.id}, function(err, files) {
-		if (err) {
+var get = function(req, res, next) {
+  File.findOne({_id: req.params.id}, function(err, file) {
+		if (err || !file) {
 			console.log(err);
-			return res.json({error: 1});
+			return res.send(503);
 		}
-		return res.json({item: files[0]});
+		return res.json({item: file});
 	});
 };
 
@@ -74,15 +74,15 @@ var download_file = function(req, res, next) {
 };
 
 var bind_routers = function(app, prefix) {
-	app.get(prefix + '/files/:id', get_file);
-	app.get(prefix + '/files', get_files);
-	//app.post(prefix + '/file/:id', save);
-	//app.delete(prefix + '/file/:id', remove);
+	app.get(prefix + 'files/:id', get);
+	app.get(prefix + 'files', query);
+	//app.post(prefix + 'file/:id', save);
+	//app.delete(prefix + 'file/:id', remove);
 	
-	app.get(prefix + '/files/:id/raw', raw_file);
-	app.get(prefix + '/files/:id/raw/*', raw_file);
-	app.get(prefix + '/files/:id/download', download_file);
-	app.get(prefix + '/files/:id/download/*', download_file);
+	app.get(prefix + 'files/:id/raw', raw_file);
+	app.get(prefix + 'files/:id/raw/*', raw_file);
+	app.get(prefix + 'files/:id/download', download_file);
+	app.get(prefix + 'files/:id/download/*', download_file);
 };
 
 exports.bind_routers = bind_routers;

@@ -24,7 +24,7 @@ var bind_routers = function(app, prefix) {
 	app.get("/dashboard", app_route);
 	app.get("/file/:id", app_route);
 	
-	app.get(prefix + '/config', function(req, res){
+	app.get(prefix + 'config', function(req, res){
 		res.json({
 			locale: req.locale,
 			site_name: config.site_name,
@@ -37,7 +37,7 @@ var bind_routers = function(app, prefix) {
 			env: app.get('env'),
 		});
 	});
-	app.get(prefix + '/online', online_route);
+	app.get(prefix + 'online', online_route);
 };
 
 exports.bind_routers = bind_routers;

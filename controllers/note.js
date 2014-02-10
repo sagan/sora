@@ -16,10 +16,10 @@ var remove = function(req, res) {
 };
 
 var bind_routers = function(app, prefix) {
-	app.get(prefix + '/notes/:id', get);
-	app.get(prefix + '/notes', query);
-	app.post(prefix + '/notes/:id', save);
-	app.delete(prefix + '/notes/:id', remove);
+	app.get(prefix + 'notes/:id', get);
+	app.get(prefix + 'notes', query);
+	app.post(prefix + 'notes/:id', save);
+	app.delete(prefix + 'notes/:id', remove);
 };
 
 exports.bind_routers = bind_routers;
