@@ -40,6 +40,7 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 		suffix: '.json'
 	});
 	$translateProvider.preferredLanguage('en');
+	$translateProvider.fallbackLanguage('en');
 }])
 .config(['ngClipProvider', function(ngClipProvider) {
 	ngClipProvider.setPath("components/zeroclipboard/ZeroClipboard.swf");

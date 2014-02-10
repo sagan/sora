@@ -1,4 +1,5 @@
 {
 	"TITLE": "Hello",
+	"FILE_LABEL": "{{filename}} File",
 	"FOO": "This is a paragraph"
 }

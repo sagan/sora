@@ -3,11 +3,19 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 
 	$scope.config = AppService.config;
 	$scope.meta = AppService.meta;
-	
+
+	$scope.titleTranslateIds = {
+		'File' : 'FILE_LABEL',	
+	};
+		
 	$scope.title = function() {
-		var title = "";
-		if( $scope.meta.page_title != "" )
-			title += $translate($scope.meta.page_title) + " | "; 
+		var title = '';
+		if( $scope.meta.page_title != 'Dashboard' ) {
+			var transactionId = $scope.titleTranslateIds[$scope.meta.page_title] || $scope.meta.page_title;
+			title += $translate(transactionId, $scope.meta.pageParams);
+		}
+		if( title )
+			title += ' | ';
 		title += $scope.config.site_name;
 		return title;
 	};
@@ -111,7 +119,7 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 	
 });
 
-app.controller("FileController", function($modal, $scope, $window, $routeParams, $location, FileService) {
+app.controller("FileController", function($modal, $scope, $window, $routeParams, $location, FileService, AppService) {
 		
 	$scope.id = $routeParams.id;
 	
@@ -147,6 +155,10 @@ app.controller("FileController", function($modal, $scope, $window, $routeParams,
 			$scope.raw_url = FileService.get_file_raw_url($scope.id, $scope.file.name);
 			$scope.download_url = FileService.get_file_download_url($scope.id, $scope.file.name);
 		}
+	});
+
+	$scope.$watch('file.name', function(filename) {
+		$scope.meta.pageParams.filename = filename;
 	});
 });
 

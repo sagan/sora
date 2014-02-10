@@ -4,6 +4,7 @@
 	"Download": "ダウンロード",
 	"Files": "ファイル",
 	"File": "ファイル",
+	"FILE_LABEL": "{{filename}} ファイル",
 	"Tags": "タグ",
 	"Submit": "提出する",
 	"Filename": "ファイル名",
