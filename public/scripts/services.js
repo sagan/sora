@@ -57,8 +57,10 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 				// Browser downloaded a new app cache.
 				console.log("App new version found, reload");
 				if ( config.env == 'development' || confirm('A new version of this site is available. Load it now?')) {
-					//$window.applicationCache.swapCache();
 					$window.location.reload();
+				} else {
+					// just download new app cache but do not activate it now
+					$window.applicationCache.swapCache();
 				}
 			} else {
 				// Manifest didn't changed. Nothing new to server.
