@@ -1,9 +1,10 @@
 CACHE MANIFEST
 # rev 0.0.1
-# xxcdddds dx
+# xxcdddddddddddds ddddddsx
 
 FALLBACK:
-/files? dashboard
+/files? /files
+/notes? /notes
 
 NETWORK:
 *
@@ -56,5 +57,7 @@ CACHE:
 /help
 /tags
 /files
+/notes
 /about
 /config
+

@@ -18,6 +18,10 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 		title: "Files",
 		reloadOnSearch: true,
 		templateUrl: 'templates/files.html'
+	}).when('/notes', {
+		title: "Notes",
+		reloadOnSearch: true,
+		templateUrl: 'templates/notes.html'
 	}).when('/file/:id', {
 		title: "File",
 		templateUrl: 'templates/file.html'

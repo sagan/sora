@@ -1,5 +1,5 @@
 
-app.factory('AppService', function($rootScope, $q, $location, $http, localStorageService) {
+app.factory('AppService', function($rootScope, $q, $location, $http, $window, localStorageService) {
 	var AppService = {};
 	
 	var config = {};
@@ -17,7 +17,10 @@ app.factory('AppService', function($rootScope, $q, $location, $http, localStorag
 	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
 		if( current.$$route )
 			meta.page_title = current.$$route.title;
-			meta.page_id = $location.path();
+		meta.page_id = $location.path();
+		if( config.env == 'development' ) {
+			$window.applicationCache.update(); // Attempt to update the user's cache.
+		}
 	});
 	
 	$http({method: 'GET', url: meta.api_root + 'config'}).success(function(data, status, headers, httpconfig) {
@@ -25,7 +28,7 @@ app.factory('AppService', function($rootScope, $q, $location, $http, localStorag
 		if( !config.site_tagline )
 			config.site_tagline = "version " + config.version;
 		localStorageService.add("config", config);
-		window.disqus_shortname = config.disqus_shortname;
+		$window.disqus_shortname = config.disqus_shortname;
 		meta.loaded = true;
 	}).error(function(data, status, headers, config) {
 		console.log("ajax get config error");
@@ -45,6 +48,23 @@ app.factory('AppService', function($rootScope, $q, $location, $http, localStorag
 		console.log('server up');
 		meta.online = true;
 	});
+
+
+	// Check if a new cache is available on page load.
+	$window.addEventListener('load', function(e) {
+		$window.applicationCache.addEventListener('updateready', function(e) {
+			if ( $window.applicationCache.status == $window.applicationCache.UPDATEREADY) {
+				// Browser downloaded a new app cache.
+				console.log("App new version found, reload");
+				if ( config.env == 'development' || confirm('A new version of this site is available. Load it now?')) {
+					//$window.applicationCache.swapCache();
+					$window.location.reload();
+				}
+			} else {
+				// Manifest didn't changed. Nothing new to server.
+			}
+		}, false);
+	}, false);
 	
 	return AppService;
 	
@@ -283,3 +303,10 @@ app.factory('FileService', function($q, $http, AppService) {
 	return FileService;
 	
 });
+
+app.factory('NoteService', function($q, $http, AppService, APIService) {
+	var NoteService = {};
+	
+	return NoteService;
+});
+

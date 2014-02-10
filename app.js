@@ -14,12 +14,20 @@ var manifest = require('./package.json');
 var database = require('./database');
 var app = express();
 
+if( config.env ) {
+	// update express env from config file
+	if( config.env == 'dev' )
+		config.env = 'development';
+	else if( config.env == 'product' ) 
+		config.env = 'production';
+	app.set('env', config.env);
+}
+
+// not working in app.configure block.
 var supported = ['en', 'ja', 'zh_CN', 'zh_TW'];
 app.use(locale(supported));
 
-if( config.prerender_token )
-	app.use(require('prerender-node')).set('prerenderToken', config.prerender_token);
-	
+
 app.configure(function(){
 	app.set('port', config.server_port || process.env.PORT || 3000);
 	app.set('ip', config.server_ip || "0.0.0.0");
@@ -34,6 +42,9 @@ app.configure(function(){
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.use("/components", express.static(path.join(__dirname, 'bower_components')));
+
+	if( config.prerender_token )
+		app.use(require('prerender-node')).set('prerenderToken', config.prerender_token);
 });
 
 app.configure('development', function(){
@@ -50,6 +61,7 @@ var start_app = function() {
 	app.get('/', app_route);
 	app.get("/tags", app_route);
 	app.get("/files", app_route);
+	app.get("/notes", app_route);
 	app.get("/config", app_route);
 	app.get("/help", app_route);
 	app.get("/about", app_route);
@@ -66,6 +78,7 @@ var start_app = function() {
 			admin_url: config.admin_url,
 			disqus_shortname: config.disqus_shortname,
 			version: manifest.version,
+			env: app.get('env'),
 		});
 	});
 	app.get('/api/online', function(req, res){

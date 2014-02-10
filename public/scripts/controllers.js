@@ -158,3 +158,9 @@ app.controller("DashboardController", function($scope, $routeParams, FileService
 		$scope.files = data.items;
 	});
 });
+
+app.controller("NotesController", function($scope, $routeParams, NoteService) {
+
+
+});
+

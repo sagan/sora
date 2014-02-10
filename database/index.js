@@ -22,6 +22,14 @@ var init = function(config, callback) {
 		var tag_scheme = require('./tag');
 		var Tag = db.model('Tag', tag_scheme);
 
+		var note_scheme = require('./note');
+		note_scheme.plugin(textSearch);
+		note_scheme.index({ title: 'text' });
+		note_scheme.index({ content: 'text' });
+	
+		var Note = db.model('Note', note_scheme);
+
+
 		callback();
 	});
 };
@@ -29,3 +37,5 @@ var init = function(config, callback) {
 exports.init = init;
 exports.SCHEME_VERSION_FILE = 1;
 exports.SCHEME_VERSION_TAG = 1;
+exports.SCHEME_VERSION_NOTE = 1;
+
