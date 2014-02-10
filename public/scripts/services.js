@@ -240,7 +240,7 @@ app.factory('FileService', function($q, $http, AppService) {
 	
 	var get_file = function(id) {
 		var defer = $q.defer();
-		$http({method: 'GET', url: AppService.meta.api_root + 'file/' + id}).success(function(data, status, headers, httpconfig) {
+		$http({method: 'GET', url: AppService.meta.api_root + 'files/' + id}).success(function(data, status, headers, httpconfig) {
 			if( !data.error ) {
 				defer.resolve({item: data.item});
 			} else {
@@ -253,14 +253,14 @@ app.factory('FileService', function($q, $http, AppService) {
 	};
 	
 	var get_file_raw_url = function(id, name) {
-		var url = AppService.meta.root_url + AppService.meta.api_root + "file/" + id + "/raw";
+		var url = AppService.meta.root_url + AppService.meta.api_root + "files/" + id + "/raw";
 		if(name)
 			url += '/' +  encodeURIComponent(name);
 		return url;
 	};
 	
 	var get_file_download_url = function(id, name) {
-		var url = AppService.meta.root_url + AppService.meta.api_root + "file/" + id + "/download";
+		var url = AppService.meta.root_url + AppService.meta.api_root + "files/" + id + "/download";
 		if(name)
 			url += '/' +  encodeURIComponent(name);
 		return url;

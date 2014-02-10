@@ -73,7 +73,16 @@ var download_file = function(req, res, next) {
 	return raw_file(req, res, next);
 };
 
-exports.get_files = get_files;
-exports.get_file = get_file;
-exports.raw_file = raw_file;
-exports.download_file = download_file;
+var bind_routers = function(app, prefix) {
+	app.get(prefix + '/files/:id', get_file);
+	app.get(prefix + '/files', get_files);
+	//app.post(prefix + '/file/:id', save);
+	//app.delete(prefix + '/file/:id', remove);
+	
+	app.get(prefix + '/files/:id/raw', raw_file);
+	app.get(prefix + '/files/:id/raw/*', raw_file);
+	app.get(prefix + '/files/:id/download', download_file);
+	app.get(prefix + '/files/:id/download/*', download_file);
+};
+
+exports.bind_routers = bind_routers;

@@ -13,4 +13,8 @@ var get_tags = function(req, res, next) {
 	});
 }
 
-exports.get_tags = get_tags;
+var bind_routers = function(app, prefix) {
+	app.get(prefix + '/tags', get_tags);
+};
+
+exports.bind_routers = bind_routers;

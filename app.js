@@ -10,7 +10,6 @@ var https = require('https');
 var path = require('path');
 var locale = require('locale');
 var config = require('./config');
-var manifest = require('./package.json');
 var database = require('./database');
 var app = express();
 
@@ -51,45 +50,15 @@ app.configure('development', function(){
 });
 
 var start_app = function() {
-	var tag_controller = require('./controllers/tag');
-	var file_controller = require('./controllers/file');
-
-	var app_route = function(req, res) {
-		res.sendfile(__dirname + '/public/templates/index.html');
-	};
-	app.get('/', app_route);
-	app.get("/tags", app_route);
-	app.get("/files", app_route);
-	app.get("/notes", app_route);
-	app.get("/config", app_route);
-	app.get("/help", app_route);
-	app.get("/about", app_route);
-	app.get("/dashboard", app_route);
-	app.get("/file/:id", app_route);
-	
-	app.get('/api/config', function(req, res){
-		res.json({
-			locale: req.locale,
-			site_name: config.site_name,
-			site_tagline: config.site_tagline,
-			site_description: config.site_description,
-			admin_name: config.admin_name,
-			admin_url: config.admin_url,
-			disqus_shortname: config.disqus_shortname,
-			version: manifest.version,
-			env: app.get('env'),
-		});
-	});
-	app.get('/api/online', function(req, res){
-		res.send(204);
-	});
-	app.get("/api/tags", tag_controller.get_tags);
-	app.get("/api/files", file_controller.get_files);
-	app.get("/api/file/:id", file_controller.get_file);
-	app.get("/api/file/:id/raw", file_controller.raw_file);
-	app.get("/api/file/:id/raw/*", file_controller.raw_file);
-	app.get("/api/file/:id/download", file_controller.download_file);
-	app.get("/api/file/:id/download/*", file_controller.download_file);
+	var mainController = require('./controllers/main');
+	var tagController = require('./controllers/tag');
+	var fileController = require('./controllers/file');
+	var noteController = require('./controllers/note');
+		
+	mainController.bind_routers(app, '/api');
+	fileController.bind_routers(app, '/api');
+	tagController.bind_routers(app, '/api');
+	noteController.bind_routers(app, '/api');
 	
 	if( config.server_ssl ) {
 		https.createServer({
