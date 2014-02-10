@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# rev 18
+# rev 28
 # 
 
 FALLBACK:
@@ -17,6 +17,10 @@ CACHE:
 
 /components/jquery/jquery.min.js?v=2.1.0
 /libs/angular/angular.min.js?v=1.2.11
+
+/components/showdown/compressed/showdown.js?v=
+/components/showdown/compressed/extensions/github.js?v=
+/components/angular-markdown/angular.markdown.js?v=
 /components/offline/offline.min.js?v=0.5.0
 /components/ydn-db/jsc/ydn.db-dev.js?v=0.8.12
 /components/highlightjs/highlight.pack.js?v=8.0

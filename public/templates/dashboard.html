@@ -5,7 +5,7 @@
 				<h3 class="panel-title">{{"Welcome" | translate}}</h3>
 			</div>
 			<div class="panel-body">
-				<p>{{config.site_description}}</p>
+				<markdown extensions="github" ng-model="config.site_description"></markdown>
 				<p>{{"To start, click the 'Files' or 'Tags', or browser the latest files in the right." | translate}}</p>
 			</div>
 			<div class="panel-footer">by <a target="_blank" href="{{config.admin_url}}">{{config.admin_name}}</a></div>

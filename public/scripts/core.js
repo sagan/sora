@@ -2,7 +2,8 @@
 'use strict';
 
 var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
-	'pascalprecht.translate', 'ngClipboard', 'ngDisqus', 'LocalStorageModule'])
+	'pascalprecht.translate', 'ngClipboard', 'ngDisqus', 'LocalStorageModule', 'angular-markdown'
+])
 .config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/dashboard', {
 		title: "Dashboard",
