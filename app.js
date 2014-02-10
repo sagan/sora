@@ -39,7 +39,6 @@ app.configure(function(){
 	app.use(express.methodOverride());
 	app.use(express.cookieParser('your secret here'));
 	app.use(express.session());
-	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.use("/components", express.static(path.join(__dirname, 'bower_components')));
 
@@ -56,7 +55,7 @@ var start_app = function() {
 	var file_controller = require('./controllers/file');
 
 	var app_route = function(req, res) {
-		res.render('index');
+		res.sendfile(__dirname + '/public/templates/index.html');
 	};
 	app.get('/', app_route);
 	app.get("/tags", app_route);

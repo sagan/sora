@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# rev 28
+# rev 37
 # 
 
 FALLBACK:
@@ -43,6 +43,7 @@ CACHE:
 /templates/config.html
 /templates/tags.html
 /templates/files.html
+/templates/notes.html
 /templates/file.html
 /templates/about.html
 /templates/help.html
@@ -57,7 +58,7 @@ CACHE:
 /scripts/i18n/zh_CN.json
 /scripts/i18n/zh_TW.json
 
-/dashboard
+/
 /help
 /tags
 /files

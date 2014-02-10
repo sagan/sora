@@ -5,7 +5,7 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 	'pascalprecht.translate', 'ngClipboard', 'ngDisqus', 'LocalStorageModule', 'angular-markdown'
 ])
 .config(function($routeProvider, $locationProvider) {
-	$routeProvider.when('/dashboard', {
+	$routeProvider.when('/', {
 		title: "Dashboard",
 		templateUrl: 'templates/dashboard.html'
 	}).when('/config', {
@@ -32,7 +32,7 @@ var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'hljs',
 	}).when('/help', {
 		title: "Help",
 		templateUrl: 'templates/help.html'
-	}).otherwise({redirectTo: '/dashboard'});
+	}).otherwise({redirectTo: '/'});
 	$locationProvider.html5Mode(true).hashPrefix('!');
 })
 .config(['$translateProvider', function($translateProvider) {
