@@ -145,7 +145,10 @@ app.factory('TagService', function($q, $http, AppService) {
 		return tags;
 	};
 	
+	query();
+	
 	TagService.query = query;
+	TagService.tags = tags;
 
 	return TagService;
 	

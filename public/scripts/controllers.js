@@ -52,7 +52,7 @@ app.controller("NavibarController", function($scope, $location, FileService) {
 });
 
 app.controller("TagsController", function($scope, TagService, FileService) {
-	$scope.tags = TagService.query();
+	$scope.tags = TagService.tags;
 		
 	$scope.color_classes = {
 		"red": "danger",
