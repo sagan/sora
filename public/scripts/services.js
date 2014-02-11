@@ -5,10 +5,10 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	var CacheWrapper = function(storageName, options) {
 		this._cache = $angularCacheFactory(storageName, options);		
 	};
-	CacheWrapper.prototype.get = function(key) {
+	CacheWrapper.prototype.get = function(key, default_value) {
 		var value = this._cache.get(key);
 		if( typeof value == 'undefined' ) {
-			value = {};
+			value = ( typeof default_value == 'undefined' ? {} : default_value );
 			this._cache.put(key, value);
 		}
 		return value;
@@ -17,8 +17,13 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 		return this._cache.put(key, value);
 	};
 	CacheWrapper.prototype.update = function(key, value) {
-		var old = this.get(key);
-		angular.copy(value, old);
+		var old_value = this._cache.get(key);
+		if( typeof old_value == 'undefined' ) {
+			this._cache.put(key, value);
+		} else {
+			angular.copy(value, old_value);
+		}
+
 	};
 
 	// permanant localstorage app data that sync with server automatically
@@ -56,13 +61,13 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 		}
 	});
 	
-	$http({method: 'GET', url: meta.api_root + 'config'}).success(function(data, status, headers, httpconfig) {
-		angular.copy(data, config);
+	$http({method: 'GET', url: meta.api_root + 'config'}).success(function(result, status, headers, httpconfig) {
+		data.update('config', result);
 		if( !config.site_tagline )
 			config.site_tagline = "version " + config.version;
 		$window.disqus_shortname = config.disqus_shortname;
 		meta.loaded = true;
-	}).error(function(data, status, headers, config) {
+	}).error(function(result, status, headers, config) {
 		console.log("ajax get config error");
 	});
 
@@ -258,51 +263,51 @@ app.factory('FileService', function($q, $http, AppService) {
 	var FileService = {};
 	
 	var config = AppService.config;
-	var files = [];
-	var meta = {};
-	
-	$http({method: 'GET', url: AppService.meta.api_root + 'files'}).success(function(data, status, headers, httpconfig) {
-		if( !data.error ) {
-			files.length = 0;
-			files.push.apply(files, data.items);
-		}
-	}).error(function(data, status, headers, httpconfig) {
+	var storage = AppService.storage;
+	var meta = AppService.meta;
 
-	});
+	var File = function(attrs) {
+		if(attrs) {
+			for(var k in attrs) {
+				if( attrs.hasOwnProperty(k) ) {
+					this[k] = attrs[k];
+				}
+			}
+		}
+	};
+	File.prototype.raw_url = function() {
+		var url = meta.root_url + meta.api_root + "files/" + this._id + "/raw";
+		url += '/' +  encodeURIComponent(this.name);
+		return url;
+	};
+	File.prototype.download_url = function() {
+		var url = meta.root_url + meta.api_root + "files/" + this._id + "/download";
+		url += '/' +  encodeURIComponent(this.name);
+		return url;
+	};
+ 
+
 	
-	var get_file = function(id) {
-		var defer = $q.defer();
-		$http({method: 'GET', url: AppService.meta.api_root + 'files/' + id}).success(function(data, status, headers, httpconfig) {
+	var get = function(id, callback) {
+		callback = callback || angular.noop;
+		$http({method: 'GET', url: meta.api_root + 'files/' + id}).success(function(data, status, headers, httpconfig) {
 			if( !data.error ) {
-				defer.resolve({item: data.item});
+				storage.update(id, new File(data.item));
+				callback(null, storage.get(id));
 			} else {
-				defer.reject({error: "FileNotFound"});	
+				callack(1);
 			}
 		}).error(function(data, status, headers, httpconfig) {
-			defer.reject({error: "HttpCommuError"});	
+			callback(1);
 		});
-		return defer.promise;
+		return storage.get(id, new File()); 
 	};
-	
-	var get_file_raw_url = function(id, name) {
-		var url = AppService.meta.root_url + AppService.meta.api_root + "files/" + id + "/raw";
-		if(name)
-			url += '/' +  encodeURIComponent(name);
-		return url;
-	};
-	
-	var get_file_download_url = function(id, name) {
-		var url = AppService.meta.root_url + AppService.meta.api_root + "files/" + id + "/download";
-		if(name)
-			url += '/' +  encodeURIComponent(name);
-		return url;
-	};
-	
+
 	// return relative url
 	var get_files_list_url = function(condition) {
 		condition = condition || {};
 		var url = "files";
-		var params = $.param(condition).replace(/\+/g, "%20"); // workaround
+		var params = $.param(condition);
 		if( params )
 			url += '?' + params;
 		return url;
@@ -311,7 +316,33 @@ app.factory('FileService', function($q, $http, AppService) {
 	var get_files_list_tag_url = function(tagname) {
 		return get_files_list_url({tags: tagname});
 	};
-	
+
+	var query = function(condition, callback) {
+		callback = callback || angular.noop;
+
+		var query_result = {
+			files: [],	
+		};
+		
+		var url = get_files_list_url(condition);
+		$http({method: 'GET', url: AppService.meta.api_root + url}).success(function(result, status) {
+			if( !result.error ) {
+				for(var i = 0; i < result.items.length; i++) {
+					storage.update(result.items[i]._id, new File(result.items[i]));
+					query_result.files.push(storage.get(result.items[i]._id));
+					query_result.count_all = result.count_all;
+					callback(null, query_result);
+				}
+			} else {
+				callback(1);
+			}
+		}).error(function(result, status) {
+			callback(1);
+		});
+
+		return query_result;
+	};
+
 	var get_files = function(condition) {
 		var defer = $q.defer();
 		var url = get_files_list_url(condition);
@@ -327,11 +358,8 @@ app.factory('FileService', function($q, $http, AppService) {
 		return defer.promise;
 	};
 	
-	FileService.files = files;
-	FileService.meta = meta;
-	FileService.get_file = get_file;
-	FileService.get_file_raw_url = get_file_raw_url;
-	FileService.get_file_download_url = get_file_download_url;
+	FileService.get = get;
+	FileService.query = query;
 	FileService.get_files_list_url = get_files_list_url;
 	FileService.get_files_list_tag_url = get_files_list_tag_url;
 	FileService.get_files = get_files;

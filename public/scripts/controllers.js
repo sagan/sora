@@ -121,22 +121,14 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 
 app.controller("FileController", function($modal, $scope, $window, $routeParams, $location, FileService, AppService) {
 		
-	$scope.id = $routeParams.id;
+	//$scope.id = $routeParams.id;
+
+	$scope.file = FileService.get($routeParams.id);
 	
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
 
-	$scope.download = function() {
-		if( $scope.download_url )
-			$window.open($scope.download_url);
-	};
-	
-	$scope.raw = function() {
-		if( $scope.raw_url )
-			$window.open($scope.raw_url);
-	};
-	
 	$scope.preview_type = function() {
-		if( !$scope.file || !$scope.file.mime )
+		if( !$scope.file.mime )
 			return "";
 		if($scope.file.mime == "image/jpeg" ||
 			$scope.file.mime == "image/png" ||
@@ -148,14 +140,6 @@ app.controller("FileController", function($modal, $scope, $window, $routeParams,
 			return "image";
 		return "";
 	};
-	
-	FileService.get_file( $scope.id ).then(function(result) {
-		if( !result.error ) {
-			$scope.file = result.item;
-			$scope.raw_url = FileService.get_file_raw_url($scope.id, $scope.file.name);
-			$scope.download_url = FileService.get_file_download_url($scope.id, $scope.file.name);
-		}
-	});
 
 	$scope.$watch('file.name', function(filename) {
 		$scope.meta.pageParams.filename = filename;

@@ -78,4 +78,17 @@ var app = angular.module("app", [
 	return function(input, scope) {
 		return JSON.stringify(input, null, "\t");
 	}
+}).run(function() {
+
+	// fix jQuery.param space encoding bug
+	// temporary
+	// http://stackoverflow.com/questions/5804872/overriding-the-jquery-param-function
+	(function($){
+		$._param = $.param; 
+		$.param = function(a) {
+			return $._param(a).replace(/\+/g, '%20');
+		};
+	})(jQuery);
+
+
 });
