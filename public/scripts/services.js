@@ -264,6 +264,7 @@ app.factory('FileService', function($q, $http, AppService) {
 	
 	var config = AppService.config;
 	var storage = AppService.storage;
+	var data = AppService.data;
 	var meta = AppService.meta;
 
 	var File = function(attrs) {
@@ -290,14 +291,14 @@ app.factory('FileService', function($q, $http, AppService) {
 	
 	var get = function(id, callback) {
 		callback = callback || angular.noop;
-		$http({method: 'GET', url: meta.api_root + 'files/' + id}).success(function(data, status, headers, httpconfig) {
-			if( !data.error ) {
-				storage.update(id, new File(data.item));
+		$http({method: 'GET', url: meta.api_root + 'files/' + id}).success(function(result, status, headers, httpconfig) {
+			if( !result.error ) {
+				storage.update(id, new File(result.item));
 				callback(null, storage.get(id));
 			} else {
 				callack(1);
 			}
-		}).error(function(data, status, headers, httpconfig) {
+		}).error(function(result, status, headers, httpconfig) {
 			callback(1);
 		});
 		return storage.get(id, new File()); 
@@ -320,49 +321,50 @@ app.factory('FileService', function($q, $http, AppService) {
 	var query = function(condition, callback) {
 		callback = callback || angular.noop;
 
-		var query_result = {
-			files: [],	
-		};
-		
 		var url = get_files_list_url(condition);
+
+		var lists = data.get('lists'); 
+
+		var query_result = {
+			items: [],
+		};
+
+		if( lists[url] ) {
+			for(var j = 0; j < lists[url].items.length; j++ ) {
+				query_result.items.push(storage.get(lists[url].items[j]));
+			}
+			query_result.count_all = lists[url].count_all;
+		}
+
 		$http({method: 'GET', url: AppService.meta.api_root + url}).success(function(result, status) {
 			if( !result.error ) {
+				lists[url] = {
+					items: [],
+				};
+				query_result.items.length = 0;
 				for(var i = 0; i < result.items.length; i++) {
 					storage.update(result.items[i]._id, new File(result.items[i]));
-					query_result.files.push(storage.get(result.items[i]._id));
-					query_result.count_all = result.count_all;
-					callback(null, query_result);
+					query_result.items.push(storage.get(result.items[i]._id));
+					lists[url].items.push(result.items[i]._id);
 				}
+				query_result.count_all = result.count_all;
+				lists[url].count_all = result.count_all;
+
+				callback(null, query_result);
 			} else {
 				callback(1);
 			}
 		}).error(function(result, status) {
 			callback(1);
 		});
-
+		
 		return query_result;
-	};
-
-	var get_files = function(condition) {
-		var defer = $q.defer();
-		var url = get_files_list_url(condition);
-		$http({method: 'GET', url: AppService.meta.api_root + url}).success(function(data, status) {
-			if( !data.error ) {
-				defer.resolve(data);
-			} else {
-				defer.reject(data);
-			}
-		}).error(function(data, status) {
-			defer.reject(data);
-		});
-		return defer.promise;
 	};
 	
 	FileService.get = get;
 	FileService.query = query;
 	FileService.get_files_list_url = get_files_list_url;
 	FileService.get_files_list_tag_url = get_files_list_tag_url;
-	FileService.get_files = get_files;
 	FileService.File = File;
 	
 	return FileService;

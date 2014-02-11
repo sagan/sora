@@ -83,7 +83,7 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 		query.limit = $scope.per_page;
 		query.skip = ($scope.current_page - 1 ) * $scope.per_page;
 		console.log("query ", query);
-		FileService.get_files(query).then(function(data) {
+		FileService.query(query, function(error, data) {
 			$scope.files = data.items;
 			$scope.count_all = data.count_all || data.items.length;
 			if( $scope.files.length > $scope.per_page ) {
@@ -150,9 +150,7 @@ app.controller("DashboardController", function($scope, $routeParams, FileService
 
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
-	FileService.get_files({sort: "modified", order: -1, limit: 10}).then(function(data) {
-		$scope.files = data.items;
-	});
+	$scope.files = FileService.query({sort: "modified", order: -1, limit: 10}).items;
 });
 
 app.controller("NotesController", function($scope, $routeParams, NoteService) {
