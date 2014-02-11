@@ -1,8 +1,16 @@
 
 'use strict';
 
-var app = angular.module("app", ['ui.bootstrap', 'ngRoute', 'ngAnimate', 'ngResource', 'hljs',
-	'pascalprecht.translate', 'ngClipboard', 'ngDisqus', 'LocalStorageModule', 'angular-markdown'
+var app = angular.module("app", [
+	'ui.bootstrap',
+	'ngRoute',
+	'ngAnimate',
+	'hljs',
+	'pascalprecht.translate',
+	'ngClipboard',
+	'ngDisqus',
+	'LocalStorageModule',
+	'angular-markdown'
 ])
 .config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/', {
