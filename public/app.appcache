@@ -1,10 +1,16 @@
 CACHE MANIFEST
-# rev 75
-# 
-
+# rev 95
+#
+ 
+# route all app url to index.html template
 FALLBACK:
-/files? /files
-/notes? /notes
+/files/ /
+/notes/ /
+/tags/ /
+
+/files? /
+/notes? /
+/tags? /
 
 NETWORK:
 *

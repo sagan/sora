@@ -22,7 +22,7 @@ var bind_routers = function(app, prefix) {
 	app.get("/help", app_route);
 	app.get("/about", app_route);
 	app.get("/dashboard", app_route);
-	app.get("/file/:id", app_route);
+	app.get("/files/:id", app_route);
 	
 	app.get(prefix + 'config', function(req, res){
 		res.json({

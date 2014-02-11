@@ -12,7 +12,8 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 		var title = '';
 		if( $scope.meta.page_title != 'Dashboard' ) {
 			var transactionId = $scope.titleTranslateIds[$scope.meta.page_title] || $scope.meta.page_title;
-			title += $translate(transactionId, $scope.meta.pageParams);
+			if( transactionId )
+				title += $translate(transactionId, $scope.meta.pageParams);
 		}
 		if( title )
 			title += ' | ';
@@ -51,7 +52,7 @@ app.controller("NavibarController", function($scope, $location, FileService) {
 });
 
 app.controller("TagsController", function($scope, TagService, FileService) {
-	$scope.tags = TagService.tags;
+	$scope.tags = TagService.query();
 		
 	$scope.color_classes = {
 		"red": "danger",
@@ -68,7 +69,6 @@ app.controller("TagsController", function($scope, TagService, FileService) {
 
 app.controller("FilesController", function($scope, $routeParams, $location, FileService) {
 	$scope.files = [];
-	
 	$scope.condition = $routeParams;
 	
 	$scope.default_per_page = 20;
@@ -84,6 +84,8 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 		query.skip = ($scope.current_page - 1 ) * $scope.per_page;
 		console.log("query ", query);
 		var result = FileService.query(query, function(error, data) {
+			if( error )
+				return;
 			$scope.files = data.items;
 			$scope.count_all = data.count_all || data.items.length;
 			if( $scope.files.length > $scope.per_page ) {
@@ -124,8 +126,9 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 });
 
 app.controller("FileController", function($modal, $scope, $window, $routeParams, $location, FileService, AppService) {
-		
-	//$scope.id = $routeParams.id;
+
+	$scope.get_raw_url = FileService.get_raw_url;
+	$scope.get_download_url = FileService.get_download_url;
 
 	$scope.file = FileService.get($routeParams.id);
 	

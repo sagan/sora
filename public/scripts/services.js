@@ -108,150 +108,45 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	
 });
 
-app.factory('APIService', function($q, $http, AppService) {
-	var api = {};
-	
-	var meta = {};
-	
-	var event_callbacks = {};
-
-	//register an observer
-	var watch = function(event, callback){
-		if( !event_callbacks[event] )
-			event_callbacks[event] = [];
-		event_callbacks[event].push(callback);
-	};
-	
-  //call this when you know 'foo' has been changed
-	var notify = function(event){
-		angular.forEach(event_callbacks[event], function(callback){
-			callback();
-		});
-	};
-	
-	var tags_store_schema = {
-		name: 'tags',
-		keyPath: '_id', // optional, 
-		autoIncrement: false, // optional. 
-		indexes: [{
-      name: 'name', // optional
-      keyPath: 'name',
-      unique: false, // default
-      multiEntry: false // default
-    }]
-	};
-	
-	var db_schema = {
-		stores: [tags_store_schema]
-	};
-	
-	var db = new ydn.db.Storage('sora', db_schema);
-	
-	var clear_collection = function(collection) {
-		var defer = $q.defer();
-		var iter = new ydn.db.ValueIterator(collection);
-		var mode = 'readwrite';
-		var updated = 0;
-		var deleted = 0;
-		db.open(function(cursor) {
-			var author = cursor.getValue();
-			cursor.clear().then(function(e) {
-				deleted++;
-			}, function(e) {
-				throw e;
-			});
-		}, iter, mode).then(function() {
-			console.log('localstorage db collection ' + collection + ' cleared: ' + deleted + ' deleted.');
-			defer.resolve();
-		}, function(e) {
-			defer.reject();
-		});
-		return defer.promise;
-	};
-
-	var fetch_tags = function() {
-		$http({method: 'GET', url: AppService.meta.api_root + 'tags'}).success(function(data, status, headers, httpconfig) {
-			console.log("fetch server tags success", data);
-			if( !data.error && data.items && data.items.length ) {
-				clear_collection("tags").then(function() {
-					db.put('tags', data.items);
-					notify("tags");
-				});
-			}
-		}).error(function(data, status, headers, httpconfig) {
-		});
-	};
-
-	var get_tags = function() {
-		var defer = $q.defer();
-		
-		var items = [];
-		
-		var iter = new ydn.db.ValueIterator("tags");
-		var mode = 'readonly';
-		db.open(function(cursor) {
-			var item = cursor.getValue();
-			items.push(item);
-		}, iter, mode).then(function() {
-			console.log('localstorage db collection queryed', items);
-			defer.resolve({items: items});
-		}, function(e) {
-			console.log('localstorage db collection queryed', []);
-			defer.reject({items: []});
-		});
-		
-		return defer.promise;
-	};
-	
-	fetch_tags();
-	
-	api.meta = meta;
-	api.get_tags = get_tags;
-	api.watch = watch;
-	
-	return api;
-});
-
-app.factory('TagService', function($q, $http, AppService, APIService) {
+app.factory('TagService', function($q, $http, AppService) {
 	var TagService = {};
 	
 	var config = AppService.config;
-	
-	var api_meta = APIService.meta;
-	
-	var tags = [];
+	var data = AppService.data;
+	var meta = AppService.meta;
 	
 	var colors = ["red", "blue", "cyan", "green", "yellow", "gray"];
-	
 	var process_tag_colors = function() {
 		for(var i =0; i < tags.length; i++) {
 			var index = Math.floor(Math.random() * (colors.length - 1 - 0 + 1) + 0);
-			tags[i].color = colors[index];
+			tags[i]._color = colors[index];
 		}
 	};
 	
-	var get_tags = function() {
-		APIService.get_tags().then(function(data) {
-			tags.length = 0;
-			tags.push.apply(tags, data.items);
-			process_tag_colors();
-		});
-	};
-	APIService.watch('tags', get_tags);
-	get_tags();
-	/*
-	$http({method: 'GET', url: AppService.meta.api_root + 'tags'}).success(function(data, status, headers, httpconfig) {
-		if( !data.error ) {
-			tags.push.apply(tags, data.items);
-			process_tag_colors();
-		}
-	}).error(function(data, status, headers, httpconfig) {
+	var tags = data.get('tags', []);
+	// shuffle tag color every time page loads.
+	process_tag_colors();
 
-	});
-	*/
+	var query = function(option, callback) {
+		callback = callback || angular.noop;
+		$http({method: 'GET', url: meta.api_root + 'tags'}).success(function(result, status, headers, httpconfig) {
+			if( !data.error ) {
+				tags.length = 0;
+				tags.push.apply(tags, result.items);
+				process_tag_colors();
+				callback(null, tags);
+			} else {
+				callback(1);
+			}
+		}).error(function(result, status, headers, httpconfig) {
+			callback(1);
+		});
+		
+		return tags;
+	};
 	
-	TagService.tags = tags;
-	
+	TagService.query = query;
+
 	return TagService;
 	
 });
@@ -264,33 +159,24 @@ app.factory('FileService', function($q, $http, AppService) {
 	var data = AppService.data;
 	var meta = AppService.meta;
 
-	var File = function(attrs) {
-		if(attrs) {
-			for(var k in attrs) {
-				if( attrs.hasOwnProperty(k) ) {
-					this[k] = attrs[k];
-				}
-			}
-		}
-	};
-	File.prototype.raw_url = function() {
-		var url = meta.root_url + meta.api_root + "files/" + this._id + "/raw";
-		url += '/' +  encodeURIComponent(this.name);
+	var get_raw_url = function(file) {
+		var url = meta.root_url + meta.api_root + "files/" + file._id + "/raw";
+		url += '/' +  encodeURIComponent(file.name);
 		return url;
 	};
-	File.prototype.download_url = function() {
-		var url = meta.root_url + meta.api_root + "files/" + this._id + "/download";
-		url += '/' +  encodeURIComponent(this.name);
-		return url;
-	};
- 
-
 	
+	var get_download_url = function(file) {
+		var url = meta.root_url + meta.api_root + "files/" + file._id + "/download";
+		url += '/' +  encodeURIComponent(file.name);
+		return url;
+	};
+ 	
 	var get = function(id, callback) {
 		callback = callback || angular.noop;
+		
 		$http({method: 'GET', url: meta.api_root + 'files/' + id}).success(function(result, status, headers, httpconfig) {
 			if( !result.error ) {
-				storage.update(id, new File(result.item));
+				storage.update(id, result.item);
 				callback(null, storage.get(id));
 			} else {
 				callack(1);
@@ -298,7 +184,8 @@ app.factory('FileService', function($q, $http, AppService) {
 		}).error(function(result, status, headers, httpconfig) {
 			callback(1);
 		});
-		return storage.get(id, new File()); 
+		
+		return storage.get(id); 
 	};
 
 	// return relative url
@@ -343,7 +230,7 @@ app.factory('FileService', function($q, $http, AppService) {
 					//pre process json rest object Date
 					result.items[i].modified = new Date(result.items[i].modified);
 
-					storage.update(result.items[i]._id, new File(result.items[i]));
+					storage.update(result.items[i]._id, result.items[i]);
 					query_result.items.push(storage.get(result.items[i]._id));
 					lists[url].items.push(result.items[i]._id);
 				}
@@ -364,15 +251,16 @@ app.factory('FileService', function($q, $http, AppService) {
 	
 	FileService.get = get;
 	FileService.query = query;
+	FileService.get_raw_url = get_raw_url;
+	FileService.get_download_url = get_download_url;
 	FileService.get_files_list_url = get_files_list_url;
 	FileService.get_files_list_tag_url = get_files_list_tag_url;
-	FileService.File = File;
 	
 	return FileService;
 	
 });
 
-app.factory('NoteService', function($q, $http, AppService, APIService) {
+app.factory('NoteService', function($q, $http, AppService) {
 	var NoteService = {};
 	
 	var get = function(id) {

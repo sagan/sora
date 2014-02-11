@@ -31,7 +31,7 @@ var app = angular.module("app", [
 		title: "Notes",
 		reloadOnSearch: true,
 		templateUrl: 'templates/notes.html'
-	}).when('/file/:id', {
+	}).when('/files/:id', {
 		title: "File",
 		templateUrl: 'templates/file.html'
 	}).when('/about', {

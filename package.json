@@ -20,6 +20,7 @@
     "mongoose-text-search": "*",
     "mongoose": "*",
     "mongodb": "*",
-    "prerender-node": "~0.1.16"
+    "prerender-node": "~0.1.16",
+    "helmet": "~0.1.2"
   }
 }

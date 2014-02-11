@@ -11,6 +11,7 @@ var path = require('path');
 var locale = require('locale');
 var config = require('./config');
 var database = require('./database');
+var helmet = require('helmet');
 var app = express();
 
 if( config.env ) {
@@ -36,6 +37,12 @@ app.configure(function(){
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
+
+	// helmet security policy
+	app.use(helmet.xframe());
+	app.use(helmet.contentTypeOptions());
+	app.use(helmet.hsts()); // HTTP Strict Transport Security
+	
 	app.use(express.cookieParser('your secret here'));
 	app.use(express.session());
 	app.use(express.static(path.join(__dirname, 'public')));

@@ -56,9 +56,9 @@
 					</td>
 					<td>
 						<ul class="list-inline">
-							<li><a class="btn btn-primary" target="_blank" href="{{file.raw_url()}}"><span class="glyphicon glyphicon-file"></span> {{'Open File' | translate}}</a></li>
-							<li><a class="btn btn-primary" target="_blank" href="{{file.download_url()}}"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</a></li>
-							<li><a class="btn btn-info" target="_blank" href="{{file.raw_url()}}" clip-copy="raw_url"><span class="glyphicon glyphicon-pushpin"></span> {{'Copy Download Link' | translate}}</a></li>
+							<li><a class="btn btn-primary" target="_blank" href="{{get_raw_url(file)}}"><span class="glyphicon glyphicon-file"></span> {{'Open File' | translate}}</a></li>
+							<li><a class="btn btn-primary" target="_blank" href="{{get_download_url(file)}}"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</a></li>
+							<li><a class="btn btn-info" target="_blank" href="{{get_raw_url(file)}}" clip-copy="raw_url"><span class="glyphicon glyphicon-pushpin"></span> {{'Copy Download Link' | translate}}</a></li>
 						</ul>
 					</td>
 				</tr>
@@ -70,7 +70,7 @@
 		</div>
 		<div class="panel-body">
 			<div ng-if='preview_type() == "image"'>
-				<a href='{{file.raw_url()}}' target="_blank"><img src="{{file.raw_url()}}" /></a>
+				<a href='{{get_raw_url(file)}}' target="_blank"><img ng-src="{{file.raw_url()}}" /></a>
 			</div>
 			<div ng-if='!preview_type()'>
 				<p>{{"Not Available" | translate}}</p>
