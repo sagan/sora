@@ -70,7 +70,7 @@
 		</div>
 		<div class="panel-body">
 			<div ng-if='preview_type() == "image"'>
-				<a href='{{get_raw_url(file)}}' target="_blank"><img ng-src="{{file.raw_url()}}" /></a>
+				<a href='{{get_raw_url(file)}}' target="_blank"><img ng-src="{{get_raw_url(file)}}" /></a>
 			</div>
 			<div ng-if='!preview_type()'>
 				<p>{{"Not Available" | translate}}</p>
