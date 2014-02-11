@@ -10,7 +10,8 @@ var app = angular.module("app", [
 	'ngClipboard',
 	'ngDisqus',
 	'LocalStorageModule',
-	'angular-markdown'
+	'jmdobry.angular-cache',
+	'angular-markdown',
 ])
 .config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/', {

@@ -44,7 +44,7 @@ var query = function(req, res, next) {
 };
 
 var get = function(req, res, next) {
-  File.findOne({_id: req.params.id}, function(err, file) {
+	File.findOne({_id: req.params.id}, function(err, file) {
 		if (err || !file) {
 			console.log(err);
 			return res.send(503);
@@ -54,7 +54,7 @@ var get = function(req, res, next) {
 };
 
 var raw_file = function(req, res, next) {
-  File.find({_id: req.params.id}, function(err, files) {
+	File.find({_id: req.params.id}, function(err, files) {
 		if (err) {
 			console.log(err);
 			return res.send(404, 'File Not Found');

@@ -1,0 +1,35 @@
+{
+  "name": "sora",
+  "version": "0.0.1",
+  "homepage": "https://github.com/sagan/sora",
+  "authors": [
+    "Ono Oogami <ono@oogami.name>"
+  ],
+  "main": "app.js",
+  "license": "GPL-3.0+",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-animate": "~1.2.12",
+    "angular-bootstrap": "~0.10.0",
+    "angular-cache": "~2.3.0",
+    "angular-disqus": "~1.1.0",
+    "angular-highlightjs": "~0.2.1",
+    "angular-local-storage": "*",
+    "angular-markdown": "~0.0.1",
+    "angular-resource": "~1.2.12",
+    "angular-route": "~1.2.12",
+    "angular-translate-loader-static-files": "~0.1.6",
+    "angular-translate": "~1.1.1",
+    "bootstrap": "~3.0.3",
+    "highlightjs": "~8.0.0",
+    "ng-clip": "~0.1.1",
+    "offline": "~0.5.0",
+    "ydn-db": "~0.8.12"
+  }
+}

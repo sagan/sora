@@ -1,8 +1,41 @@
 
-app.factory('AppService', function($rootScope, $q, $location, $http, $window, localStorageService) {
+app.factory('AppService', function($rootScope, $q, $location, $http, $window, localStorageService, $angularCacheFactory) {
 	var AppService = {};
+
+	var CacheWrapper = function(storageName, options) {
+		this._cache = $angularCacheFactory(storageName, options);		
+	};
+	CacheWrapper.prototype.get = function(key) {
+		var value = this._cache.get(key);
+		if( typeof value == 'undefined' ) {
+			value = {};
+			this._cache.put(key, value);
+		}
+		return value;
+	};
+	CacheWrapper.prototype.put = function(key, value) {
+		return this._cache.put(key, value);
+	};
+	CacheWrapper.prototype.update = function(key, value) {
+		var old = this.get(key);
+		angular.copy(value, old);
+	};
+
+	// permanant localstorage app data that sync with server automatically
+	// do not impose a limit but should only storage a small count of data
+	var data = new CacheWrapper('dataCache', {
+		storageMode: 'localStorage',
+	});
+	//window.data = data; // debug
+
+	// mongodb storage is a **cache** which means has limit
+	// query ob mongodb objectid (_id)
+	var storage = new CacheWrapper('storageCache', {
+		capacity: 2000,
+		storageMode: 'localStorage',
+	});
 	
-	var config = {};
+	var config = data.get('config');
 	
 	var meta = {
 		loaded: false,
@@ -13,8 +46,6 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	
 	meta.root_url = $location.protocol() + '://' +  $location.host() + ($location.port() != ( $location.protocol() == "http" ? 80 : 443 ) ? ':' + $location.port() : '') + $("base").attr("href");
 	meta.api_root = "api/";
-	
-	angular.copy(localStorageService.get('config'), config);
 	
 	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
 		if( current.$$route )
@@ -29,7 +60,6 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 		angular.copy(data, config);
 		if( !config.site_tagline )
 			config.site_tagline = "version " + config.version;
-		localStorageService.add("config", config);
 		$window.disqus_shortname = config.disqus_shortname;
 		meta.loaded = true;
 	}).error(function(data, status, headers, config) {
@@ -38,6 +68,8 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 
 	AppService.config = config;
 	AppService.meta = meta;
+	AppService.data = data;
+	AppService.storage = storage;
 	
 	Offline.options = {checkOnLoad: true, checks: {xhr: {url: meta.api_root + 'online'}}};
 	
@@ -312,6 +344,17 @@ app.factory('FileService', function($q, $http, AppService) {
 app.factory('NoteService', function($q, $http, AppService, APIService) {
 	var NoteService = {};
 	
+	var get = function(id) {
+
+	};
+
+	var query = function(condition) {
+
+	};
+
+	NoteService.get = get;
+	NoteService.query = query;
+
 	return NoteService;
 });
 
