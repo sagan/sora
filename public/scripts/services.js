@@ -33,8 +33,8 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	// mongodb storage is a **cache** which means has limit
 	// query ob mongodb objectid (_id)
 	var storage = new CacheWrapper('storageCache', {
-		capacity: 2000,
-		storageMode: 'localStorage',
+		capacity: 1000,
+		//storageMode: 'localStorage',
 	});
 	
 	var config = data.get('config');
