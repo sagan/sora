@@ -5,7 +5,7 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	var CacheWrapper = function(storageName, options) {
 		this._cache = $angularCacheFactory(storageName, options);		
 	};
-	CacheWrapper.prototype.get = function(key, default_value) {
+	CacheWrapper.prototype.get = function(key, default_value, callback) {
 		var value = this._cache.get(key);
 		if( typeof value == 'undefined' ) {
 			value = ( typeof default_value == 'undefined' ? {} : default_value );
@@ -13,10 +13,7 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 		}
 		return value;
 	};
-	CacheWrapper.prototype.put = function(key, value) {
-		return this._cache.put(key, value);
-	};
-	CacheWrapper.prototype.update = function(key, value) {
+	CacheWrapper.prototype.update = function(key, value, callback) {
 		var old_value = this._cache.get(key);
 		if( typeof old_value == 'undefined' ) {
 			this._cache.put(key, value);
@@ -343,6 +340,9 @@ app.factory('FileService', function($q, $http, AppService) {
 				};
 				query_result.items.length = 0;
 				for(var i = 0; i < result.items.length; i++) {
+					//pre process json rest object Date
+					result.items[i].modified = new Date(result.items[i].modified);
+
 					storage.update(result.items[i]._id, new File(result.items[i]));
 					query_result.items.push(storage.get(result.items[i]._id));
 					lists[url].items.push(result.items[i]._id);
@@ -358,6 +358,7 @@ app.factory('FileService', function($q, $http, AppService) {
 			callback(1);
 		});
 		
+		console.log(query_result);
 		return query_result;
 	};
 	

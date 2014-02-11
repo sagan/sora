@@ -103,6 +103,9 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 			}
 		});
 		$scope.files = result.items;
+		if( result.count_all )
+			$scope.count_all = result.count_all;
+
 	};
 	
 	$scope.$watch("current_page", load_files);
