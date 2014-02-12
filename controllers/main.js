@@ -41,6 +41,7 @@ var bind_routers = function(app, prefix) {
 			admin_url: config.admin_url,
 			disqus_shortname: config.disqus_shortname,
 			version: manifest.version,
+			disableAppcache: config.disableAppcache,
 			env: app.get('env'),
 		});
 	});

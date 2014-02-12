@@ -165,13 +165,30 @@ app.controller("NotesController", function($scope, $routeParams, NoteService) {
 
 	$scope.condition = {};
 
-	$scope.notes = NoteService.query( $scope.condition ).items;
+	$scope.perPage = 20;
+	$scope.currentPage = 1;
+	$scope.countAll = 0;
+	
 
 	$scope.changeCurrentNote = function(index) {
-		$scope.currentNote = $scope.notes[index] || {};
+		$scope.currentNote = $scope.notes[index];
 	};
 
-	$scope.changeCurrentNote(0);
+	var loadNotesList = function() {
+		var query = angular.copy($scope.condition);
+		query.limit = $scope.perPage;
+		query.skip = ( $scope.currentPage - 1 ) * $scope.perPage;
+		var query_result = NoteService.query(query, function() {
+			$scope.countAll = query_result.count_all;
+			$scope.changeCurrentNote(0);
+		});
+		$scope.notes = query_result.items;
+		$scope.countAll = query_result.count_all;
+		$scope.changeCurrentNote(0);
+	};
+
+	$scope.$watch("currentPage", loadNotesList);
+
 
 });
 

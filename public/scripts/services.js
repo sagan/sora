@@ -53,7 +53,7 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 		if( current.$$route )
 			meta.page_title = current.$$route.title;
 		meta.page_id = $location.path();
-		if( config.env == 'development' ) {
+		if( config.env == 'development' && !config.disableAppcache ) {
 			$window.applicationCache.update(); // Attempt to update the user's cache.
 		}
 	});
