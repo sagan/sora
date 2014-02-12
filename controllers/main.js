@@ -3,14 +3,15 @@ var path = require('path');
 var fs = require('fs');
 
 var config = require('../config');
-var manifest = require('../package.json');
 
 var appMainFile = path.resolve(__dirname, '../public/templates/index.html');
-if( config.disableAppcache ) {
-	var appMainFileNoCache = path.resolve(__dirname, '../temp/index-noappcache.html');
-	fs.writeFileSync( appMainFileNoCache, fs.readFileSync(appMainFile, {encoding: 'utf8'}).replace('manifest="/app.appcache" ', '') );
-	appMainFile = appMainFileNoCache; 
-}
+(function() {
+	if( config.disableAppcache ) {
+		var appMainFileNoCache = path.resolve(__dirname, '../tmp/index-noappcache.html');
+		fs.writeFileSync( appMainFileNoCache, fs.readFileSync(appMainFile, {encoding: 'utf8'}).replace('manifest="/app.appcache" ', '') );
+		appMainFile = appMainFileNoCache; 
+	}
+})();
 
 var app_route = function(req, res) {
 	res.sendfile( appMainFile );
@@ -40,9 +41,9 @@ var bind_routers = function(app, prefix) {
 			admin_name: config.admin_name,
 			admin_url: config.admin_url,
 			disqus_shortname: config.disqus_shortname,
-			version: manifest.version,
+			version: config.version,
 			disableAppcache: config.disableAppcache,
-			env: app.get('env'),
+			env: config.env,
 		});
 	});
 	app.get(prefix + 'online', online_route);

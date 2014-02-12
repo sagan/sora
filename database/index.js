@@ -2,8 +2,9 @@
 var mongoose = require('mongoose');
 var textSearch = require('mongoose-text-search');
 
+var config = require('../config');
 
-var init = function(config, callback) {
+var init = function(callback) {
 	mongoose.connect(config.mongodb_link);
 	var db = mongoose.connection;
 	
@@ -28,7 +29,6 @@ var init = function(config, callback) {
 		note_scheme.index({ content: 'text' });
 	
 		var Note = db.model('Note', note_scheme);
-
 
 		callback();
 	});

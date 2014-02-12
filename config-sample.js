@@ -52,13 +52,12 @@ config.mongodb_link = 'mongodb://localhost/sora';
  * The library path where your files are located in.
  * Sora will watch this path and index all files in it.
  */
-config.library_path = '/path/to/your/library';
+config.library_path = '/tmp';
 
 /**
- * The config file name of library
- * Will be created in every dir in library
- */ 
-config.libraryControlFileName = 'sora.json';
+ * a secret string used in session
+ */
+config.secretToken = 'your secret here';
 
 /*
  * running environment of your site app.
@@ -67,14 +66,7 @@ config.libraryControlFileName = 'sora.json';
  *
  * default value is "development"
  */
-//config.env = 'development';
-
-/*
- * which ip should your site server listening on ?
- *
- * default value is 0.0.0.0 (means listening on all available ethnet addresses)
- */
-//config.server_ip = '0.0.0.0';
+config.env = 'development';
 
 /* 
  * in which port should your site server listening on ?
@@ -82,7 +74,14 @@ config.libraryControlFileName = 'sora.json';
  *
  * default value is 3000
  */
-//config.server_port = 3000;
+config.server_port = 80;
+
+/*
+ * which ip should your site server listening on ?
+ *
+ * default value is 0.0.0.0 (means listening on all available ethnet addresses)
+ */
+//config.server_ip = '0.0.0.0';
 
 /*
  * whether your site are using SSL / TLS ?
@@ -113,4 +112,17 @@ config.libraryControlFileName = 'sora.json';
  */
 //config.prerender_token = '';
 
+/**
+ * The config file name of library
+ * Will be created in every dir in library
+ *
+ * default value is ".sora.json"
+ */ 
+//config.libraryControlFileName = '.sora.json';
 
+/**
+ * Disable offline cache.
+ *
+ * default value is false
+ */
+//config.disableAppcache = false;

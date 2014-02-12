@@ -66,7 +66,7 @@ var scan_dir = function(dir, tags, result_callback) {
 			return;
 		}
 
-		var path = path.relative(config.library_path, dir);
+		var relative_path = path.relative(config.library_path, dir);
 		
 		File.find({path: path}, function(err, dbfiles) {
 		
@@ -148,11 +148,9 @@ var daemon = function() {
 	});
 };
 
-var start_daemon = function() {
+var init = function() {
 	//setInterval(daemon, 30000);
 	daemon();
 };
 
-exports.scan = scan;
-exports.daemon = daemon;
-exports.start_daemon = start_daemon;
+exports.init = init;
