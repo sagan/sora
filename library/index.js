@@ -40,7 +40,7 @@ var process_file = function(file, stats, tags, callback) {
 			var file = old || new File({path: filepath, name: filename});
 			file.size = stats.size;
 			file.modified = stats.mtime;
-			file.tags = file_tags;
+			file.tags = fileTags;
 			file.mime = mime.lookup(filename);
 			file.scheme_version = database.SCHEME_VERSION_FILE;
 			return file;
