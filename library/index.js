@@ -58,11 +58,20 @@ var process_file = function(file, stats, tags) {
 };
 
 var scan_dir = function(dir, tags, result_callback) {
+
+	var soraDirMetaFilePath = path.join(dir, 'sora.txt');
 	fs.readdir(dir, function(err, files) {
 		if(err) {
 			result_callback(-1);
 			return;
 		}
+
+		var path = path.relative(config.library_path, dir);
+		
+		File.find({path: path}, function(err, dbfiles) {
+		
+		});
+
 		async.eachLimit(files, 3, function(file, callback){
 			var filename = path.join(dir, file);
 			fs.stat(filename, function(err, stats) {

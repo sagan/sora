@@ -54,6 +54,12 @@ config.mongodb_link = 'mongodb://localhost/sora';
  */
 config.library_path = '/path/to/your/library';
 
+/**
+ * The config file name of library
+ * Will be created in every dir in library
+ */ 
+config.libraryControlFileName = 'sora.json';
+
 /*
  * running environment of your site app.
  * set it to "development" or "production"
