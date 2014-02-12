@@ -1,12 +1,19 @@
 
 var path = require('path');
+var fs = require('fs');
 
 var config = require('../config');
 var manifest = require('../package.json');
 
-var app_route_file = path.resolve(__dirname, '../public/templates/index.html');
+var appMainFile = path.resolve(__dirname, '../public/templates/index.html');
+if( config.disableAppcache ) {
+	var appMainFileNoCache = path.resolve(__dirname, '../temp/index-noappcache.html');
+	fs.writeFileSync( appMainFileNoCache, fs.readFileSync(appMainFile, {encoding: 'utf8'}).replace('manifest="/app.appcache" ', '') );
+	appMainFile = appMainFileNoCache; 
+}
+
 var app_route = function(req, res) {
-		res.sendfile(app_route_file);
+	res.sendfile( appMainFile );
 };
 
 var online_route = function(req, res){
@@ -41,3 +48,4 @@ var bind_routers = function(app, prefix) {
 };
 
 exports.bind_routers = bind_routers;
+

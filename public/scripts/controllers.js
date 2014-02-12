@@ -137,7 +137,8 @@ app.controller("FileController", function($modal, $scope, $window, $routeParams,
 	$scope.preview_type = function() {
 		if( !$scope.file.mime )
 			return "";
-		if($scope.file.mime == "image/jpeg" ||
+		if(
+			$scope.file.mime == "image/jpeg" ||
 			$scope.file.mime == "image/png" ||
 			$scope.file.mime == "image/gif" ||
 			$scope.file.mime == "image/bmp" ||
@@ -162,6 +163,15 @@ app.controller("DashboardController", function($scope, $routeParams, FileService
 
 app.controller("NotesController", function($scope, $routeParams, NoteService) {
 
+	$scope.condition = {};
+
+	$scope.notes = NoteService.query( $scope.condition ).items;
+
+	$scope.changeCurrentNote = function(index) {
+		$scope.currentNote = $scope.notes[index] || {};
+	};
+
+	$scope.changeCurrentNote(0);
 
 });
 

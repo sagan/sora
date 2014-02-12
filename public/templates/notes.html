@@ -1,5 +1,27 @@
 <div ng-controller="NotesController">
 	<h2>{{"Notes" | translate}}</h2>
+    	<div style="" class="row">
+		<div class="col-lg-4">
+			<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{"Notes" | translate}}</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="40%">{{"Title" | translate}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="note in notes | filter: filter">
+							<td>
+								<span><span><a ng-click='changeCurrentNote($index)' title=''>{{note.title}}</a></span></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
 	<form class="form">
 		<div class="form-group">
 			<div class="input-group" style="">
@@ -10,28 +32,20 @@
 			</div>
 		</div>
 	</form>
-  <tabset>
-    <tab heading='{{"Note List" | translate}}'>
-    	<div style="margin-top:10px">
-			  <table class="table table-bordered table-fixed-columns-width">
-					<thead>
-						<tr>
-							<th width="40%">{{"Title" | translate}}</th>
-							<th width="60%">{{"Modified" | translate}}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="note in notes | filter: filter">
-							<td>
-								<span><span><a href=''>{{note._id}}</a></span></span>
-							</td>
-							<td>
-								<span>{{note.modified}}</span></td>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+
+			</div>
+			</div>
+		</div>
+		<div class="col-lg-8">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{currentNote.title}}</h3>
+			</div>
+			<div class="panel-body">
+				<markdown extensions="github" ng-model="currentNote.content"></markdown>
+			</div>
+			<div class="panel-footer"><span ng-if='currentNote.modified'>{{currentNote.modified | date:'medium'}}</span></div>
+		</div>
+		</div>
     	</div>
-    </tab>
-  </tabset>
 </div>

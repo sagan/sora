@@ -230,9 +230,6 @@ app.factory('FileService', function($q, $http, AppService) {
 				};
 				query_result.items.length = 0;
 				for(var i = 0; i < result.items.length; i++) {
-					//pre process json rest object Date
-					result.items[i].modified = new Date(result.items[i].modified);
-
 					storage.update(result.items[i]._id, result.items[i]);
 					query_result.items.push(storage.get(result.items[i]._id));
 					lists[url].items.push(result.items[i]._id);
@@ -265,12 +262,73 @@ app.factory('FileService', function($q, $http, AppService) {
 
 app.factory('NoteService', function($q, $http, AppService) {
 	var NoteService = {};
-	
-	var get = function(id) {
 
+	var config = AppService.config;
+	var storage = AppService.storage;
+	var data = AppService.data;
+	var meta = AppService.meta;
+
+
+	var get = function(id, callback) {
+		callback = callback || angular.noop;
+		
+		$http({method: 'GET', url: meta.api_root + 'notes/' + id}).success(function(result, status, headers, httpconfig) {
+			if( !result.error ) {
+				storage.update(id, result.item);
+				callback(null, storage.get(id));
+			} else {
+				callack(1);
+			}
+		}).error(function(result, status, headers, httpconfig) {
+			callback(1);
+		});
+		
+		return storage.get(id);
 	};
 
-	var query = function(condition) {
+	var query = function(condition, callback) {
+		callback = callback || angular.noop;
+		condition = condition || {};
+
+		var url = 'notes' + '?' + $.param(condition);
+
+		var lists = data.get('lists'); 
+
+		var query_result = {
+			items: [],
+		};
+
+		if( lists[url] ) {
+			for(var j = 0; j < lists[url].items.length; j++ ) {
+				query_result.items.push(storage.get(lists[url].items[j]));
+			}
+			query_result.count_all = lists[url].count_all;
+		}
+
+		$http({method: 'GET', url: meta.api_root + url}).success(function(result, status) {
+			if( !result.error ) {
+				lists[url] = {
+					items: [],
+				};
+				query_result.items.length = 0;
+				for(var i = 0; i < result.items.length; i++) {
+					storage.update(result.items[i]._id, result.items[i]);
+					query_result.items.push(storage.get(result.items[i]._id));
+					lists[url].items.push(result.items[i]._id);
+				}
+				query_result.count_all = result.count_all;
+				lists[url].count_all = result.count_all;
+
+				callback(null, query_result);
+			} else {
+				callback(1);
+			}
+		}).error(function(result, status) {
+			callback(1);
+		});
+		
+		console.log(query_result);
+		return query_result;
 
 	};
 
