@@ -15,18 +15,29 @@ var File = db.model('File');
 var Files = db.collection("files");
 var Tags = db.collection("tags");
 
-var process_file = function(file, stats, tags) {
+var getFileTags = function(file, stats) {
+	var relative_path = path.relative(config.library_path, file);
+	var filepath = path.dirname(relative_path);
+	return filepath.split(path.sep);
+};
+
+var process_file = function(file, stats, tags, callback) {
 	var relative_path = path.relative(config.library_path, file);
 	console.log("process_file " + relative_path);
 	
-	var filesegs = relative_path.split(path.sep);
-	var filename = filesegs.pop();
-	var file_tags = filesegs;
+	var filepath = path.dirname(relative_path);
+	var filename = path.basename(relative_path);
+	var fileTags = getFileTags(file, stats);
 	
-	File.findOne({path: relative_path}, function(err, item) {
+	for(var i = 0; i < fileTags.length; i++) {
+		if( tags.indexOf(fileTags[i]) == -1 ) {
+			tags.push(fileTags[i]);
+		}
+	}
+
+	File.findOne({path: filepath, name: filename}, function(err, item) {
 		var get_new_file = function(old) {
-			var file = old || new File({path: relative_path});
-			file.name = filename;
+			var file = old || new File({path: filepath, name: filename});
 			file.size = stats.size;
 			file.modified = stats.mtime;
 			file.tags = file_tags;
@@ -36,65 +47,147 @@ var process_file = function(file, stats, tags) {
 		};
 		if( !item ) {
 			var create_file = get_new_file();
-			create_file.save(function(err) {
-				
+			create_file.save(function(err, saved) {
+				callback(err, {id: saved._id});
 			});
 		} else {
-			item.scheme_version = item.scheme_version || 0;
-			if(item.scheme_version < database.SCHEME_VERSION_FILE ) {
-				var new_file = get_new_file(item);
-				new_file.save(function(err) {
-				
-				});
-			}
+			var new_file = get_new_file(item);
+			new_file.save(function(err, saved) {
+				callback(err, {id: saved._id});
+			});
 		}
 	});
 	
-	for(var i = 0; i < file_tags.length; i++) {
-		if( tags.indexOf(file_tags[i]) == -1 ) {
-			tags.push(file_tags[i]);
-		}
-	}
+
 };
 
-var scan_dir = function(dir, tags, result_callback) {
+var scan_dir = function(dir, tags, result_callback, options) {
 
-	var soraDirMetaFilePath = path.join(dir, 'sora.txt');
-	fs.readdir(dir, function(err, files) {
-		if(err) {
-			result_callback(-1);
-			return;
-		}
-
-		var relative_path = path.relative(config.library_path, dir);
-		
-		File.find({path: path}, function(err, dbfiles) {
-		
+	options = options || {};
+	
+	var dirMetaFile = path.join(dir, config.libraryControlFileName);
+	var dirMeta;
+	var dirFiles = {};
+	var dirChangedFiles = {};
+	var dirDeletedFiles = {};
+	var dirSubDirs = {};
+	
+	var readDirMeta = function(serieCallback) {
+		fs.readFile(dirMetaFile, {encoding: 'utf8'}, function(err, filecontent) {
+			if(err || options.fullRescan) {
+				dirMeta = {
+					files: {},
+				};
+			} else {
+				dirMeta = JSON.parse(filecontent);
+			}
+			serieCallback(dirMeta.noindex);
 		});
+	};
+	
+	var readDirFiles = function(serieCallback) {
+		fs.readdir(dir, function(err, files) {
+			if(err) {
+				serieCallback('ReadDirFileError');
+				return;
+			}
 
-		async.eachLimit(files, 3, function(file, callback){
-			var filename = path.join(dir, file);
-			fs.stat(filename, function(err, stats) {
-				if( err ) {
-					console.log(err);
-					callback();
-					return;
-				}
-				if( stats.isDirectory() ) {
-					scan_dir(filename, tags, function() {
+			async.eachLimit(files, 3, function(file, callback){
+				var filename = path.join(dir, file);
+				fs.stat(filename, function(err, stats) {
+					if( err ) {
+						console.log(err);
 						callback();
-					});
-				} else if( stats.isFile()) {
-					process_file(filename, stats, tags);
-					callback();
-				} else {
-					callback(); // not a dir or a regular file, just skip it.
-				}
+						return;
+					}
+					if( stats.isDirectory() ) {
+						dirSubDirs[file] = {stats: stats};
+						callback();
+					} else if( stats.isFile()) {
+						if(path.extname(file) != '' && file.substr(0, 1) != '.')
+							dirFiles[file] = {stats: stats};
+						callback();
+					} else {
+						callback(); // not a dir or a regular file, just skip it.
+					}
+				});
+			}, function(err) {
+				serieCallback();
 			});
-		}, function(err) {
-			result_callback(err);
 		});
+	};
+	
+	var processFiles = function(serieCallback) {
+		for(var name in dirFiles) {
+			if(	!dirMeta.files[name] || !dirMeta.files[name].modified ) {
+				dirChangedFiles[name] = dirFiles[name];
+			} else {
+				var oldFileModifiedTime = new Date( dirMeta.files[name].modified );
+				if( oldFileModifiedTime.getTime() < dirFiles[name].stats.mtime.getTime() ) {
+					dirChangedFiles[name] = dirFiles[name];
+				}
+			}
+		}
+		
+		for(var name in dirMeta.files) {
+			if( !dirFiles[name] ) {
+				dirDeletedFiles[name] = dirMeta.files[name];
+			}
+		}
+		
+		async.forEach(Object.keys(dirChangedFiles), function(name, callback){
+			process_file(path.join(dir, name), dirChangedFiles[name].stats, tags, function(err, result) {
+					if( ! dirMeta.files[name] )
+						dirMeta.files[name] = {};
+					dirMeta.files[name].modified = dirChangedFiles[name].stats.mtime;
+					dirMeta.files[name].id = result.id;
+					callback();
+			});
+		}, function() {
+			serieCallback();
+		});
+		
+	};
+	
+	var cleanDeletedFiles = function(serieCallback) {
+		async.forEach(Object.keys(dirDeletedFiles), function(name, callback){
+			File.remove({_id: dirDeletedFiles[name].id}, function(err) {
+				delete dirMeta.files[name];
+				callback();
+			});
+		}, function() {
+			serieCallback();
+		});
+	};
+	
+	var processSubDirs = function(serieCallback) {
+		if( options.recursive ) {
+			async.forEach(Object.keys(dirSubDirs), function(name, callback){
+					scan_dir(path.join(dir, name), tags, function() {
+						callback();
+					}, options);
+			}, function() {
+				serieCallback();
+			});
+		} else {
+			serieCallback();
+		}
+	};
+	
+	var updateDirMetaFile = function(serieCallback) {
+		if( Object.keys(dirChangedFiles).length != 0 || Object.keys(dirDeletedFiles) != 0) {
+			fs.writeFile(dirMetaFile, JSON.stringify(dirMeta), function(err) {
+				serieCallback(err);
+			})
+		} else {
+			serieCallback();
+		}
+	};
+	
+	async.series([readDirMeta, readDirFiles, processFiles, cleanDeletedFiles, processSubDirs, updateDirMetaFile], function(err) {
+		result_callback(err);
 	});
+
 };
 
 var process_tags = function(tags) {
@@ -134,7 +227,7 @@ var scan = function(callback) {
 		console.log(tags);
 		process_tags(tags);
 		callback();
-	});
+	}, {recursive: true});
 };
 
 var daemon_running = false;
@@ -149,7 +242,7 @@ var daemon = function() {
 };
 
 var init = function() {
-	//setInterval(daemon, 30000);
+	setInterval(daemon, 30000);
 	daemon();
 };
 

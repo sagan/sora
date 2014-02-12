@@ -16,8 +16,9 @@ exports.init = function(app) {
 	// load default config
 	var config = {};
 	
+	config.version = require('./package.json').version;
 	config.site_name = 'Sora';
-	config.site_tagline = '願いが叶う場所';
+	config.site_tagline = 'version ' + config.version;
 	config.site_description = 'powered by Sora Project \n\n' +
 	  '[Github](https://github.com/sagan/sora)';
 	config.admin_name = 'Admin';
@@ -35,7 +36,6 @@ exports.init = function(app) {
 	config.server_ssl_key = '';
 	config.disqus_shortname = '';
 	config.prerender_token = '';
-	config.version = require('./package.json').version;
 	
 	for(var k in config) {
 		if( typeof main_config[k] == 'undefined' )
@@ -76,4 +76,4 @@ exports.init = function(app) {
 		app.use(express.errorHandler());
 	});
 	
-}
+};

@@ -63,7 +63,7 @@ var raw_file = function(req, res, next) {
 		if( !file.path ) {
 			return res.send(403, 'File Not Available');
 		}
-		return res.sendfile(path.join(config.library_path, file.path));
+		return res.sendfile(path.join(config.library_path, file.path, file.name));
 	});
 };
 
