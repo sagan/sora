@@ -9,8 +9,8 @@ var init = function(callback) {
 	var db = mongoose.connection;
 	
 	db.on('error', function() {
-		console.log('connection error:');	
-		callback(1);
+		console.log('mongodb connection error:');	
+		callback('mongodb connection error:');
 	});
 	
 	db.once('open', function() {

@@ -12,7 +12,11 @@ var app = express();
 var config = require('./config');
 require('./settings').init(app);
 
-require('./database').init(function() {
+require('./database').init(function(err) {
+	if( err ) {
+		console.log('database init failure', err);
+		process.exit(1);
+	}
 	require('./library').init(app);
 	require('./controllers').init(app);
 	
