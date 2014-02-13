@@ -115,6 +115,7 @@ config.server_port = 80;
 /**
  * The config file name of library
  * Will be created in every dir in library
+ * Note this file must be started with dot ('.') char
  *
  * default value is ".sora.json"
  */ 
