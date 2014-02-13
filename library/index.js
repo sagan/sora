@@ -18,6 +18,8 @@ var Tags = db.collection("tags");
 var getFileTags = function(file, stats) {
 	var relative_path = path.relative(config.library_path, file);
 	var filepath = path.dirname(relative_path);
+	if( filepath == '.' )
+		return [];
 	return filepath.split(path.sep);
 };
 
@@ -263,15 +265,29 @@ var daemon = function(callback) {
 };
 
 
+var watchedChangingDirs = {};
+
 var libraryChangedEventListener = function(event, filename, dirname) {
 	console.log('Library change detected. ', event, filename, dirname);
+	
+	var tags = [];
+	scan_dir(dirname, tags, function() {
+		process_tags(tags);
+	}, {recursive: false});
 };
 
 var addFsWatch = function(filepath, listener) {
 	console.log('Add watch for dir ' + filepath);
 	fs.watch(filepath, function(event, filename) {
-		if( !filename || filename.substr(0, 1) != '.' )
-			listener(event, filename, filepath);
+		if( !filename || filename.substr(0, 1) != '.' ) {
+			if( watchedChangingDirs[filepath] ) {
+				clearTimeout(watchedChangingDirs[filepath]);
+				delete watchedChangingDirs[filepath];	
+			}
+			watchedChangingDirs[filepath] = setTimeout(function() {
+				listener(event, filename, filepath);
+			}, 2000);
+		}
 	});
 };
 

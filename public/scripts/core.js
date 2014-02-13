@@ -11,6 +11,7 @@ var app = angular.module("app", [
 	'LocalStorageModule',
 	'jmdobry.angular-cache',
 	'angular-markdown',
+	'ngPDFViewer',
 ])
 .config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/', {

@@ -55,7 +55,7 @@
 						<span>{{"Operations" | translate}}</span>
 					</td>
 					<td>
-						<ul class="list-inline">
+						<ul class="list-inline" ng-show='file._id'>
 							<li><a class="btn btn-primary" target="_blank" href="{{get_raw_url(file)}}"><span class="glyphicon glyphicon-file"></span> {{'Open File' | translate}}</a></li>
 							<li><a class="btn btn-primary" target="_blank" href="{{get_download_url(file)}}"><span class="glyphicon glyphicon-download"></span> {{'Download' | translate}}</a></li>
 							<li><a class="btn btn-info" target="_blank" href="{{get_raw_url(file)}}" clip-copy="raw_url"><span class="glyphicon glyphicon-pushpin"></span> {{'Copy Download Link' | translate}}</a></li>
@@ -71,6 +71,20 @@
 		<div class="panel-body">
 			<div ng-if='preview_type() == "image"'>
 				<a href='{{get_raw_url(file)}}' target="_blank"><img ng-src="{{get_raw_url(file)}}" /></a>
+			</div>
+			<div ng-if='preview_type() == "pdf"'>
+				<div ng-controller='PDFViewController' ng-init="init( get_raw_url(file) )">
+					<div>
+						<div class="btn-group">
+							<button class='btn btn-default' ng-click="prevPage()"><span class="glyphicon glyphicon-chevron-left"></span> {{'Prev Page' | translate }}</button>
+							<button class='btn btn-default' ng-click="nextPage()"><span class="glyphicon glyphicon-chevron-right"></span> {{'Next Page' | translate }}</button>
+						</div>
+						<span class="label label-info pull-right">{{currentPage}} / {{totalPages}}</span>
+					</div>
+					<div class="clearfix">
+						<pdfviewer src="{{pdfsrc}}" on-page-load='loadedPage(page,total)' id="pdf-viewer"></pdfviewer>
+					</div>
+				</div>
 			</div>
 			<div ng-if='!preview_type()'>
 				<p>{{"Not Available" | translate}}</p>

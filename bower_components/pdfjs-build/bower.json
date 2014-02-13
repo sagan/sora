@@ -1,0 +1,16 @@
+{
+  "name": "pdfjs-build",
+  "version": "0.8.1",
+  "homepage": "https://github.com/RiptideCloud/pdfjs-build",
+  "authors": [
+    "Max Burstein <max.burstein@riptidesoftware.com>"
+  ],
+  "description": "Fully compiled version of Mozilla's pdf.js library",
+  "main": "pdf.js",
+  "keywords": [
+    "pdf.js",
+    "pdfjs",
+    "pdf"
+  ],
+  "license": "MIT"
+}

@@ -146,7 +146,9 @@ app.controller("FileController", function($modal, $scope, $window, $routeParams,
 			$scope.file.mime == "image/x-icon"
 		)
 			return "image";
-		return "";
+		if( $scope.file.mime == 'application/pdf' )
+			return 'pdf';
+		return '';
 	};
 
 	$scope.$watch('file.name', function(filename) {
@@ -192,3 +194,27 @@ app.controller("NotesController", function($scope, $routeParams, NoteService) {
 
 });
 
+app.controller("PDFViewController", function($scope, PDFViewerService) {
+	
+	$scope.init = function(src) {
+		$scope.pdfsrc = src;
+	};
+	
+	$scope.currentPage = 1;
+	$scope.totalPages = 1;
+	
+	$scope.viewer = PDFViewerService.Instance("pdf-viewer");
+
+	$scope.nextPage = function() {
+		$scope.viewer.nextPage();
+	};
+
+	$scope.prevPage = function() {
+		$scope.viewer.prevPage();
+	};
+
+	$scope.loadedPage = function(curPage, totalPages) {
+		$scope.currentPage = curPage;
+		$scope.totalPages = totalPages;
+	};
+});

@@ -45,6 +45,10 @@ CACHE:
 /components/highlightjs/highlight.pack.js?v=8.0.0
 /components/angular-highlightjs/angular-highlightjs.min.js?v=0.2.1
 /components/angular-bootstrap/ui-bootstrap-tpls.min.js?v=0.10.0
+/components/pdfjs-build/pdf.js
+/components/pdfjs-build/pdf.worker.js
+/components/pdfjs-build/generic/web/compatibility.js
+/scripts/ng-pdfviewer.js
 
 /templates/dashboard.html
 /templates/config.html
