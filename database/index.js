@@ -27,8 +27,12 @@ var init = function(callback) {
 		note_scheme.plugin(textSearch);
 		note_scheme.index({ title: 'text' });
 		note_scheme.index({ content: 'text' });
-	
 		var Note = db.model('Note', note_scheme);
+		
+		var dir_scheme = require('./dir');
+		var Dir = db.model('Dir', dir_scheme);
+
+
 
 		callback();
 	});

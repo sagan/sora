@@ -3,9 +3,9 @@ var mongoose = require('mongoose');
 
 var file_scheme = new mongoose.Schema({
 	name:  String,
+	path:  String,
 	sha1:  String,
 	modified:  Date,
-	path:  String,
 	library:  String,
 	mime:  String,
 	size:  Number,

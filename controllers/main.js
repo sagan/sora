@@ -13,25 +13,39 @@ var appMainFile = path.resolve(__dirname, '../public/templates/index.html');
 	}
 })();
 
-var app_route = function(req, res) {
+var appRoute = function(req, res) {
 	res.sendfile( appMainFile );
 };
 
-var online_route = function(req, res){
+var onlineRoute = function(req, res){
 	res.send(204);
 };
 
+var initConfigRoute = function(req, res) {
+	res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+	var initConfig = {};
+	initConfig.locale = req.locale;
+
+	var content = '<script type="text/javascript">';
+	content += 'window.sora=' +  JSON.stringify(initConfig) + ';';
+	content += '</script>';
+
+	res.send(content);
+};
+
 var bind_routers = function(app, prefix) {
-	app.get('/', app_route);
-	app.get("/tags", app_route);
-	app.get("/files", app_route);
-	app.get("/notes", app_route);
-	app.get("/config", app_route);
-	app.get("/help", app_route);
-	app.get("/about", app_route);
-	app.get("/dashboard", app_route);
-	app.get("/files/:id", app_route);
+	app.get('/', appRoute);
+	app.get("/tags", appRoute);
+	app.get("/files", appRoute);
+	app.get("/notes", appRoute);
+	app.get("/config", appRoute);
+	app.get("/help", appRoute);
+	app.get("/about", appRoute);
+	app.get("/dashboard", appRoute);
+	app.get("/files/:id", appRoute);
 	
+	app.get('/init', initConfigRoute);
+
 	app.get(prefix + 'config', function(req, res){
 		res.json({
 			locale: req.locale,
@@ -46,7 +60,7 @@ var bind_routers = function(app, prefix) {
 			env: config.env,
 		});
 	});
-	app.get(prefix + 'online', online_route);
+	app.get(prefix + 'online', onlineRoute);
 };
 
 exports.bind_routers = bind_routers;

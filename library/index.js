@@ -1,5 +1,5 @@
 
-var fs = require('fs');
+var fs = require('./fs');
 var async = require('async');
 var path = require('path');
 var util = require('util');
@@ -67,6 +67,8 @@ var scan_dir = function(dir, tags, result_callback, options) {
 	
 	var dirMetaFile = path.join(dir, config.libraryControlFileName);
 	var dirMeta;
+	var dirStats;
+	var dirChanged = true;
 	var dirFiles = {};
 	var dirChangedFiles = {};
 	var dirDeletedFiles = {};
@@ -81,7 +83,11 @@ var scan_dir = function(dir, tags, result_callback, options) {
 			} else {
 				dirMeta = JSON.parse(filecontent);
 			}
-			serieCallback(dirMeta.noindex);
+
+			fs.lstat(dir, function(err, stats) {
+				dirStats = stats;	
+				serieCallback(dirMeta.noindex || err);
+			});
 		});
 	};
 	
@@ -92,9 +98,13 @@ var scan_dir = function(dir, tags, result_callback, options) {
 				return;
 			}
 
+			if( dirMeta.modified && ( new Date(dirMeta.modified) ).getTime() >= dirStats.mtime.getTime() ) {
+				dirChanged = false;
+			} 
+
 			async.eachLimit(files, 3, function(file, callback){
 				var filename = path.join(dir, file);
-				fs.stat(filename, function(err, stats) {
+				fs.lstat(filename, function(err, stats) {
 					if( err ) {
 						console.log(err);
 						callback();
@@ -104,8 +114,10 @@ var scan_dir = function(dir, tags, result_callback, options) {
 						dirSubDirs[file] = {stats: stats};
 						callback();
 					} else if( stats.isFile()) {
-						if(path.extname(file) != '' && file.substr(0, 1) != '.')
-							dirFiles[file] = {stats: stats};
+						if( dirChanged ) {
+							if(path.extname(file) != '' && file.substr(0, 1) != '.')
+								dirFiles[file] = {stats: stats};
+						}
 						callback();
 					} else {
 						callback(); // not a dir or a regular file, just skip it.
@@ -118,6 +130,12 @@ var scan_dir = function(dir, tags, result_callback, options) {
 	};
 	
 	var processFiles = function(serieCallback) {
+		if( !dirChanged ) {
+			console.log( dir + ' unchanged, skip');
+			serieCallback();
+			return;
+		}
+
 		for(var name in dirFiles) {
 			if(	!dirMeta.files[name] || !dirMeta.files[name].modified ) {
 				dirChangedFiles[name] = dirFiles[name];
@@ -175,7 +193,9 @@ var scan_dir = function(dir, tags, result_callback, options) {
 	};
 	
 	var updateDirMetaFile = function(serieCallback) {
-		if( Object.keys(dirChangedFiles).length != 0 || Object.keys(dirDeletedFiles) != 0) {
+		if( dirChanged || Object.keys(dirChangedFiles).length != 0 || Object.keys(dirDeletedFiles) != 0) {
+			if( dirChanged )
+				dirMeta.modified = dirStats.mtime;
 			fs.writeFile(dirMetaFile, JSON.stringify(dirMeta), function(err) {
 				serieCallback(err);
 			})
@@ -232,18 +252,63 @@ var scan = function(callback) {
 
 var daemon_running = false;
 
-var daemon = function() {
+var daemon = function(callback) {
 	if( daemon_running )
 		return -1;
 	daemon_running = true;
 	scan(function(err) {
+		callback(err);
 		daemon_running = false;
 	});
 };
 
+
+var libraryChangedEventListener = function(event, filename) {
+	console.log('Library change detected. ', event, filename);
+};
+
+var addFsWatch = function(filepath, listener) {
+	console.log('Add watch for dir ' + filepath);
+	fs.watch(filepath, listener);
+};
+
+var setupWatches =function(dir, listener, result_callback) {
+	fs.readdir(dir, function(err, files) {
+		if( err ) {
+			result_callback(err);
+		} else {
+			addFsWatch(dir, libraryChangedEventListener);
+			async.forEach(files, function(file, callback) {
+				var filepath = path.join(dir,file);
+				fs.lstat(filepath, function(err, stats) {
+					if( err ) {
+						callback(err);
+						return;
+					}
+
+					if( !stats.isDirectory() || file.substr(0, 1) == '.' ) {
+						callback();	
+					} else {
+						setupWatches(filepath, listener, function() {
+							callback();
+						});
+					}
+				});
+			}, function(err) {
+				result_callback(err);
+			});	
+		}
+	});	
+};
+
 var init = function() {
-	setInterval(daemon, 30000);
-	daemon();
+	//setInterval(daemon, 1 * 60 * 1000);
+	daemon(function() {
+		setupWatches(config.library_path, libraryChangedEventListener, function() {
+			console.log('setup fs watches complete');
+		});
+	});
 };
 
 exports.init = init;
+
