@@ -5,8 +5,8 @@
 
 var fs = require('fs');
 var http = require('http');
-var https = require('https');
 var express = require('express');
+var spdy = require('spdy');
 var app = express();
 
 var config = require('./config');
@@ -21,7 +21,7 @@ require('./database').init(function(err) {
 	require('./controllers').init(app);
 	
 	if( config.server_ssl ) {
-		https.createServer({
+		spdy.createServer({
 			key: fs.readFileSync(config.server_ssl_key),
 			cert: fs.readFileSync(config.server_ssl_cert)
 		}, app).listen(config.server_port, config.server_ip, function(){

@@ -21,6 +21,7 @@
     "mongoose": "*",
     "mongodb": "*",
     "prerender-node": "~0.1.16",
-    "helmet": "~0.1.2"
+    "helmet": "~0.1.2",
+    "spdy": "~1.19.2"
   }
 }
