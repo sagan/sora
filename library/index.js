@@ -276,8 +276,12 @@ var libraryChangedEventListener = function(event, filename, dirname) {
 	}, {recursive: false});
 };
 
+var fsWatches = {};
 var addFsWatch = function(filepath, listener) {
+	if( fsWatches[filepath] )
+		return;	
 	console.log('Add watch for dir ' + filepath);
+	fsWatches[filepath] = {};
 	fs.watch(filepath, function(event, filename) {
 		if( !filename || filename.substr(0, 1) != '.' ) {
 			if( watchedChangingDirs[filepath] ) {
@@ -285,8 +289,22 @@ var addFsWatch = function(filepath, listener) {
 				delete watchedChangingDirs[filepath];	
 			}
 			watchedChangingDirs[filepath] = setTimeout(function() {
-				listener(event, filename, filepath);
-			}, 2000);
+				delete watchedChangingDirs[filepath];
+				if( event == 'rename' ) {
+					var chanedpath = path.join(filepath, filename);
+					fs.lstat(chanedpath, function(err, stats) {
+						if( !err && stats.isDirectory() && ! fsWatches[chanedpath] ) {
+							// new directory created ?
+							addFsWatch(chanedpath, listener);
+							listener('change', '', chanedpath);
+						} else {
+							listener(event, filename, filepath);	
+						}
+					});	
+				} else {
+					listener(event, filename, filepath);
+				}
+			}, 1000);
 		}
 	});
 };
