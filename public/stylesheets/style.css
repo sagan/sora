@@ -28,3 +28,10 @@ div[ng-controller="FileController"] img {
    font-size: 100%;
    margin-bottom: 0.3em;
 }
+
+
+.sora-header-right {
+	margin-top: 30px;
+	font-size: 20px;
+}
+

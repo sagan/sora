@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var config = require('../config');
 var db = mongoose.connection;
 var File = db.model('File');
+var checkAuthorize = require('./auth').checkAuthorize;
 
 var query = function(req, res, next) {
 	var condition = {};
@@ -15,7 +16,7 @@ var query = function(req, res, next) {
 	var skip = req.query.skip || 0;
 	var limit = req.query.limit || 20;
 	var sort = {};
-	sort[req.query.sort || 'name'] = req.query.order || 1;
+	sort[req.query.sort || 'modified'] = req.query.order || -1;
 		
 	if( condition.search ) {
 		File.textSearch(condition.search, function(err, output) {
@@ -31,6 +32,7 @@ var query = function(req, res, next) {
 			return res.json({items: files});
 		});
 	} else {
+		condition = File.buildQuery(condition);
 		File.count(condition, function(err, count) {
 			File.find(condition).sort(sort).skip(skip).limit(limit).exec(function(err, files) {
 				if (err) {
@@ -74,15 +76,15 @@ var download_file = function(req, res, next) {
 };
 
 var bind_routers = function(app, prefix) {
-	app.get(prefix + 'files/:id', get);
-	app.get(prefix + 'files', query);
-	//app.post(prefix + 'file/:id', save);
-	//app.delete(prefix + 'file/:id', remove);
+	app.get(prefix + 'files/:id', checkAuthorize('public'), get);
+	app.get(prefix + 'files', checkAuthorize('public'), query);
+	//app.post(prefix + 'file/:id', checkAuthorize('admin'), save);
+	//app.delete(prefix + 'file/:id', checkAuthorize('admin'), remove);
 	
-	app.get(prefix + 'files/:id/raw', raw_file);
-	app.get(prefix + 'files/:id/raw/*', raw_file);
-	app.get(prefix + 'files/:id/download', download_file);
-	app.get(prefix + 'files/:id/download/*', download_file);
+	app.get(prefix + 'files/:id/raw', checkAuthorize('public'), raw_file);
+	app.get(prefix + 'files/:id/raw/*', checkAuthorize('public'), raw_file);
+	app.get(prefix + 'files/:id/download', checkAuthorize('public'), download_file);
+	app.get(prefix + 'files/:id/download/*', checkAuthorize('public'), download_file);
 };
 
 exports.bind_routers = bind_routers;

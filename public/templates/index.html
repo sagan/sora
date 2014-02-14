@@ -24,7 +24,7 @@
 	<body ng-cloak>
 		<div class="container">
 			<noscript><h1><a href="/">Sora</a></h1><p class="lead">This site needs Javascript to work. Please enable Javascript and reload.</p></noscript>
-			<h1><a href="/" ng-bind="config.site_name"></a> <small ng-bind="config.site_tagline"></small></h1>
+			<div ng-include='"templates/header.html"'></div>
 			<div ng-include='"templates/navibar.html"'></div>
 			<div ng-view></div>
 			<div id="disqus"></div>
@@ -50,6 +50,8 @@
 		<script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.min.js?v=0.10.0"></script>
 		<script type="text/javascript" src="components/pdfjs-build/pdf.js"></script>
 		<script type="text/javascript" src="components/pdfjs-build/generic/web/compatibility.js"></script>
+		<script type="text/javascript" src="components/angular-gravatar/build/md5.min.js"></script>
+		<script type="text/javascript" src="components/angular-gravatar/build/angular-gravatar.min.js"></script>
 		<script type="text/javascript" src="scripts/ng-pdfviewer.js"></script>
 		<script type="text/javascript" src="scripts/core.js?v=0.0.1"></script>
 		<script type="text/javascript" src="scripts/services.js?v=0.0.1"></script>

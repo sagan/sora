@@ -32,8 +32,6 @@ var init = function(callback) {
 		var dir_scheme = require('./dir');
 		var Dir = db.model('Dir', dir_scheme);
 
-
-
 		callback();
 	});
 };

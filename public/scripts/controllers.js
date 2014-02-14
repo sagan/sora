@@ -7,7 +7,15 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 	$scope.titleTranslateIds = {
 		'File' : 'FILE_LABEL',	
 	};
-		
+	
+	$scope.signIn = function() {
+		location.href='auth/google';	
+	};
+	
+	$scope.signOut = function() {
+		location.href='logout';	
+	};
+	
 	$scope.title = function() {
 		var title = '';
 		if( $scope.meta.page_title != 'Dashboard' ) {

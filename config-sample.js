@@ -32,6 +32,16 @@ config.site_tagline = '願いが叶う場所';
  */
 config.site_description = 'powered by Sora Project \n\n' +
   '[Github](https://github.com/sagan/sora)';
+  
+/**
+ * set it to your site root url
+ * Like: 'http://example.com/'
+ * change example.com to your site domain. If you are using SSL, change http to https.
+ * 
+ * If you do not provide this value, some functions will not be working. (like "Sign in with Google" function)
+ * 
+ */
+config.siteUrl = '';
 
 /*
  * The administrator (site owner) display name.
@@ -42,6 +52,17 @@ config.admin_name = 'Admin';
  * The administrator's homepage URL, will be displayed on site.
  */
 config.admin_url = 'http://';
+
+/*
+ * The administrator's google account (gmail address) 
+ * Format: 'example@gmail.com'
+ * Sora will use it to automatically identify admin when logging in with this Google account.
+ *
+ * Currently we only support logging in using 'Google' account.
+ * Which need your server has a public internet connection.
+ *
+ */
+config.adminGoogleAccount = '';
 
 /*
  * The mongodb database connection link.

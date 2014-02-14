@@ -48,6 +48,8 @@ CACHE:
 /components/pdfjs-build/pdf.js
 /components/pdfjs-build/pdf.worker.js
 /components/pdfjs-build/generic/web/compatibility.js
+/components/angular-gravatar/build/md5.min.js
+/components/angular-gravatar/build/angular-gravatar.min.js
 /scripts/ng-pdfviewer.js
 
 /templates/dashboard.html
@@ -59,6 +61,7 @@ CACHE:
 /templates/about.html
 /templates/help.html
 /templates/navibar.html
+/templates/header.html
 
 /stylesheets/style.css?v=0.0.1
 /scripts/core.js?v=0.0.1

@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var config = require('../config');
 var db = mongoose.connection;
 var Note = db.model('Note');
-
+var checkAuthorize = require('./auth').checkAuthorize;
 
 var get = function(req, res) {
     	Note.findOne({_id: req.params.id}, function(err, note) {
@@ -25,7 +25,9 @@ var query = function(req, res) {
 	if( req.query.tags ) {
 		if( typeof req.query.tags == 'string' )
 			condition.tags = [req.query.tags];
-		//else(
+		else if ( Array.isArray(req.query.tags) ) {
+			condition.tags = req.query.tags;
+		}
 	}
 	if( req.query.search )
 		condition.search = req.query.search;
@@ -67,10 +69,10 @@ var remove = function(req, res) {
 };
 
 var bind_routers = function(app, prefix) {
-	app.get(prefix + 'notes/:id', get);
-	app.get(prefix + 'notes', query);
-	app.post(prefix + 'notes/:id', save);
-	app.delete(prefix + 'notes/:id', remove);
+	app.get(prefix + 'notes/:id', checkAuthorize('public'), get);
+	app.get(prefix + 'notes', checkAuthorize('public'), query);
+	app.post(prefix + 'notes/:id', checkAuthorize('public'), save);
+	app.delete(prefix + 'notes/:id', checkAuthorize('public'), remove);
 };
 
 exports.bind_routers = bind_routers;

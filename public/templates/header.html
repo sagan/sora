@@ -1,0 +1,14 @@
+
+<div class="">
+	<h1 class="pull-left"><a href="/" ng-bind="config.site_name"></a> <small ng-bind="config.site_tagline"></small></h1>
+	<div class="pull-right sora-header-right">
+		<div ng-if="config.user">
+			<img gravatar-src="config.user.email" gravatar-size="32">
+			<a ng-click="signOut()" tooltip-placement="bottom" tooltip="{{ 'Sign Out' | translate}}">{{config.user.name}}</a>
+		</div>
+		<div ng-if="!config.user">
+			<a ng-click='signIn()'>{{'Sign in with Google' | translate}}</a>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>

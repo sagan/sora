@@ -2,14 +2,26 @@
 exports.init = function(app) {
 	var path = require('path');
 		
-	var main_config = require('./config');
+	var mainConfig = require('./config');
 	
 	// sanitize user config
-	if( main_config.env ) {
-		if( main_config.env == 'dev' )
-			main_config.env = 'development';
-		else if( main_config.env == 'product' ) 
-			main_config.env = 'production';
+	if( mainConfig.env ) {
+		if( mainConfig.env == 'dev' )
+			mainConfig.env = 'development';
+		else if( mainConfig.env == 'product' ) 
+			mainConfig.env = 'production';
+	}
+	
+	if( mainConfig.adminGoogleAccount ) {
+		if( mainConfig.adminGoogleAccount.indexOf('@') == -1 ) {
+			mainConfig.adminGoogleAccount += '@gmail.com';
+		}
+	}
+	
+	if( mainConfig.siteUrl ) {
+		if( mainConfig.siteUrl[mainConfig.siteUrl.length - 1] != '/' ) {
+			mainConfig.siteUrl += '/';
+		}
 	}
 
 
@@ -21,8 +33,10 @@ exports.init = function(app) {
 	config.site_tagline = 'version ' + config.version;
 	config.site_description = 'powered by Sora Project \n\n' +
 	  '[Github](https://github.com/sagan/sora)';
+	config.siteUrl = '';
 	config.admin_name = 'Admin';
 	config.admin_url = 'http://';
+	config.adminGoogleAccount = '';
 	config.mongodb_link = 'mongodb://localhost/sora';
 	config.secretToken = 'your secret here';
 	config.library_path = '';
@@ -38,18 +52,21 @@ exports.init = function(app) {
 	config.prerender_token = '';
 	
 	for(var k in config) {
-		if( typeof main_config[k] == 'undefined' )
-			main_config[k] = config[k];
+		if( typeof mainConfig[k] == 'undefined' )
+			mainConfig[k] = config[k];
 	}
-	console.log(main_config);
+	console.log(mainConfig);
 	
 	
 	// configure app
 	var express = require('express');
 	var helmet = require('helmet');
 	var locale = require('locale');
+	var passport = require('passport');
+	var GoogleStrategy = require('passport-google').Strategy;
+	var MongoStore = require('connect-mongo')(express);
 	
-	app.set('env', main_config.env);
+	app.set('env', mainConfig.env);
 	
 	var supported = ['en', 'ja', 'zh_CN', 'zh_TW'];
 	app.use(locale(supported));
@@ -64,14 +81,47 @@ exports.init = function(app) {
 	app.use(helmet.contentTypeOptions());
 	app.use(helmet.hsts()); // HTTP Strict Transport Security
 	
-	app.use(express.cookieParser(main_config.secretToken));
-	app.use(express.session());
+	app.use(express.cookieParser(mainConfig.secretToken));
+	app.use(express.session( {store: new MongoStore({
+		url: mainConfig.mongodb_link + '/sessions'
+  })}));
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.use("/components", express.static(path.join(__dirname, 'bower_components')));
 	
-	if( main_config.prerender_token )
-		app.use(require('prerender-node')).set('prerenderToken', main_config.prerender_token);
+	if( mainConfig.prerender_token )
+		app.use(require('prerender-node')).set('prerenderToken', mainConfig.prerender_token);
 		
+	app.use(passport.initialize());
+	app.use(passport.session());
+	
+	// Authentication using passsport
+	passport.use(new GoogleStrategy({
+		returnURL: mainConfig.siteUrl + 'auth/google/return',
+		realm: mainConfig.siteUrl
+  }, function(identifier, profile, done) {
+  	console.log( 'logining', identifier, profile );
+		done(null, {
+			email: profile.emails[0].value,
+			name: profile.displayName
+		});
+	}));
+	
+	passport.serializeUser(function(user, done) {
+		done(null, JSON.stringify(user));
+	});
+
+	passport.deserializeUser(function(userstring, done) {
+		done(null, JSON.parse(userstring));
+	});
+	
+	app.get('/auth/google', passport.authenticate('google'));
+	app.get('/auth/google/return', passport.authenticate('google', { successRedirect: '/', failureRedirect: '/' }));
+	
+	app.get('/logout', function(req, res){
+		req.logout();
+		res.redirect('/');
+	});
+
 	app.configure('development', function(){
 		app.use(express.errorHandler());
 	});

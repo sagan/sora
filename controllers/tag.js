@@ -2,6 +2,7 @@
 var mongoose = require('mongoose');
 var db = mongoose.connection;
 var Tag = db.model('Tag');
+var checkAuthorize = require('./auth').checkAuthorize;
 
 var get_tags = function(req, res, next) {
   Tag.find(function(err, tags) {
@@ -14,7 +15,7 @@ var get_tags = function(req, res, next) {
 }
 
 var bind_routers = function(app, prefix) {
-	app.get(prefix + 'tags', get_tags);
+	app.get(prefix + 'tags', checkAuthorize('public'), get_tags);
 };
 
 exports.bind_routers = bind_routers;

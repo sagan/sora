@@ -1,0 +1,15 @@
+{
+  "name": "ng-pdfviewer",
+  "homepage": "https://github.com/aurigadl/ng-pdfviewer",
+  "version": "0.2.1",
+  "_release": "0.2.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.1",
+    "commit": "aabc22b4b85e3065c7860edb3954c85146d4396c"
+  },
+  "_source": "git://github.com/aurigadl/ng-pdfviewer.git",
+  "_target": "~0.2.1",
+  "_originalSource": "ng-pdfviewer",
+  "_direct": true
+}

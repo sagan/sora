@@ -3,6 +3,7 @@ var path = require('path');
 var fs = require('fs');
 
 var config = require('../config');
+var auth = require('./auth');
 
 var appMainFile = path.resolve(__dirname, '../public/templates/index.html');
 (function() {
@@ -58,6 +59,8 @@ var bind_routers = function(app, prefix) {
 			version: config.version,
 			disableAppcache: config.disableAppcache,
 			env: config.env,
+			user: req.user,
+			userRole: auth.userRole(req.user),
 		});
 	});
 	app.get(prefix + 'online', onlineRoute);

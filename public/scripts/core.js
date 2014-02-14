@@ -12,6 +12,7 @@ var app = angular.module("app", [
 	'jmdobry.angular-cache',
 	'angular-markdown',
 	'ngPDFViewer',
+	'ui.gravatar',
 ])
 .config(function($routeProvider, $locationProvider) {
 	$routeProvider.when('/', {
@@ -55,6 +56,17 @@ var app = angular.module("app", [
 .config(['ngClipProvider', function(ngClipProvider) {
 	ngClipProvider.setPath("components/zeroclipboard/ZeroClipboard.swf");
 }])
+.config([
+  'gravatarServiceProvider', function(gravatarServiceProvider) {
+    gravatarServiceProvider.defaults = {
+      size     : 100,
+      "default": 'mm'  // Mystery man as default for missing avatars
+    };
+
+    // Use https endpoint
+    gravatarServiceProvider.secure = (location.protocol == 'https:');
+  }
+])
 .directive('integer', function() {
 	var INTEGER_REGEXP = /^\-?\d+$/;
 	return {
