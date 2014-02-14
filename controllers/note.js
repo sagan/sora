@@ -22,10 +22,14 @@ var save = function(req, res) {
 
 var query = function(req, res) {
  	var condition = {};
-	if( req.query.tags )
-		condition.tags = req.query.tags;
+	if( req.query.tags ) {
+		if( typeof req.query.tags == 'string' )
+			condition.tags = [req.query.tags];
+		//else(
+	}
 	if( req.query.search )
 		condition.search = req.query.search;
+	console.log('get param tags:', req.query.tags);
 	
 	var skip = req.query.skip || 0;
 	var limit = req.query.limit || 20;
