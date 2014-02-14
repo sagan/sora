@@ -24,6 +24,7 @@
     "helmet": "~0.1.2",
     "spdy": "~1.19.2",
     "passport": "~0.2.0",
-    "connect-mongo": "~0.4.0"
+    "connect-mongo": "~0.4.0",
+    "passport-google": "latest"
   }
 }
