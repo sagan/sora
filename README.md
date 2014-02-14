@@ -13,7 +13,8 @@ Install
 1. 安装 node.js 和 mongodb.
 2. 获取 Sora 代码: ```git clone https://github.com/sagan/sora.git && cd sora```
 3. 安装依赖: ```npm install```
-4. 从示例创建并编辑配置文件 ```cp config-sample.json config.json && vim config.json```
+4. 从示例创建并编辑配置文件 ```cp config-sample.js config.js && vim config.js```. 默认的配置文件是js格式,
+可以在其中执行任意代码. 你也可以使用json格式的配置文件(命名为config.json即可)
 5. 运行:  ```node app.js```
 
 
