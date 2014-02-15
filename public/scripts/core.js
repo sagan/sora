@@ -1,4 +1,3 @@
-
 'use strict';
 
 var app = angular.module("app", [
@@ -34,7 +33,7 @@ var app = angular.module("app", [
 		templateUrl: 'templates/tags.html'
 	}).state('files', {
 		title: "Files",
-		url: "/files?limit&tags&skip",
+		url: "/files?limit&tags&skip&search",
 		templateUrl: 'templates/files.html'
 	}).state('notes', {
 		title: "Notes",
