@@ -13,7 +13,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      	<li ng-class="{ active: isStateActive('files')}" class=""><a ui-sref="files">{{"Files" | translate}}</a></li>
+      	<li ng-class="{ active: isStateActive('files')}" class=""><a ui-sref="files({ tags: null, search: null, skip: null, limit: null })">{{"Files" | translate}}</a></li>
         <li ng-class="{ active: isStateActive('tags')}" class=""><a ui-sref="tags">{{"Tags" | translate}}</a></li>
         <li ng-class="{ active: isStateActive('notes')}" class=""><a ui-sref="notes">{{"Notes" | translate}}</a></li>
       </ul>

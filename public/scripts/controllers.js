@@ -55,8 +55,8 @@ app.controller("NavibarController", function($scope, $state, $location, FileServ
 
 	$scope.search = function() {
 		console.log( FileService.get_files_list_url({search: $scope.keyword}) );
-		$location.path("files");
-		$location.search("search", $scope.keyword);
+		var keyword = $scope.keyword.trim();
+		$state.go ('files', { search: keyword || null, tags: null, limit: null, skip: null } );
 	};
 	
 });
