@@ -1,6 +1,6 @@
 
 <div class="">
-	<h1 class="pull-left"><a href="/" ng-bind="config.site_name"></a> <small ng-bind="config.site_tagline"></small></h1>
+	<h1 class="pull-left"><a ui-sref="dashboard" ng-bind="config.site_name"></a> <small ng-bind="config.site_tagline"></small></h1>
 	<div class="pull-right sora-header-right">
 		<div ng-if="config.user" style="display: inline-block;">
 			<img gravatar-src="config.user.email" gravatar-size="40">
@@ -11,13 +11,13 @@
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{config.user.name}} <b class="caret"></b></a>
 					<ul class="dropdown-menu">
-						<li><a ng-click="signOut()">{{"Sign Out" | translate}}</a></li>
+						<li><a ng-click='signOut();'>{{"Sign Out" | translate}}</a></li>
 					</ul>
 				</li>
 			</ul>
 		</div>
 		<div ng-if="!config.user" class="sora-header-right-login">
-			<a ng-click='signIn()'>{{'Sign in with Google' | translate}}</a>
+			<a ng-click='signIn();'>{{'Sign in with Google' | translate}}</a>
 		</div>
 	</div>
 	<div class="clearfix"></div>

@@ -4,7 +4,6 @@
 var app = angular.module("app", [
 	'ui.bootstrap',
 	'ui.router',
-	'ngRoute',
 	'ngAnimate',
 	'hljs',
 	'pascalprecht.translate',
@@ -16,40 +15,57 @@ var app = angular.module("app", [
 	'ngPDFViewer',
 	'ui.gravatar',
 ])
-.config(function($routeProvider, $locationProvider) {
-	$routeProvider.when('/', {
-		title: "Dashboard",
-		templateUrl: 'templates/dashboard.html'
-	}).when('/config', {
-		title: "Config",
-		templateUrl: 'templates/config.html'
-	}).when('/tags', {
-		title: "Tags",
-		reloadOnSearch: true,
-		templateUrl: 'templates/tags.html'
-	}).when('/files', {
-		title: "Files",
-		reloadOnSearch: true,
-		templateUrl: 'templates/files.html'
-	}).when('/notes', {
-		title: "Notes",
-		reloadOnSearch: true,
-		templateUrl: 'templates/notes.html'
-	}).when('/admin', {
-		title: "Admin",
-		reloadOnSearch: true,
-		templateUrl: 'templates/admin.html'
-	}).when('/files/:id', {
-		title: "File",
-		templateUrl: 'templates/file.html'
-	}).when('/about', {
-		title: "About",
-		templateUrl: 'templates/about.html'
-	}).when('/help', {
-		title: "Help",
-		templateUrl: 'templates/help.html'
-	}).otherwise({redirectTo: '/'});
+.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+		
 	$locationProvider.html5Mode(true).hashPrefix('!');
+	$urlRouterProvider.otherwise("/");
+	
+	$stateProvider.state('dashboard', {
+		title: "Dashboard",
+		url: "/",
+		templateUrl: 'templates/dashboard.html'
+	}).state('config', {
+		title: "Config",
+		url: "/config",
+		templateUrl: 'templates/config.html'
+	}).state('tags', {
+		title: "Tags",
+		url: "/tags",
+		templateUrl: 'templates/tags.html'
+	}).state('files', {
+		title: "Files",
+		url: "/files?limit&tags&skip",
+		templateUrl: 'templates/files.html'
+	}).state('notes', {
+		title: "Notes",
+		url: "/notes",
+		templateUrl: 'templates/notes.html'
+	}).state('admin', {
+		title: "Admin",
+		url: "/admin",
+		templateUrl: 'templates/admin.html'
+	}).state('admin.basic', {
+		title: "Admin Basic",
+		url: "/basic",
+		templateUrl: 'templates/admin.basic.html'
+	}).state('admin.system', {
+		title: "Admin System",
+		url: "/system",
+		templateUrl: 'templates/admin.system.html'
+	}).state('files/:id', {
+		title: "File",
+		url: "/files/:id",
+		templateUrl: 'templates/file.html'
+	}).state('about', {
+		title: "About",
+		url: "/about",
+		templateUrl: 'templates/about.html'
+	}).state('help', {
+		title: "Help",
+		url: "/help",
+		templateUrl: 'templates/help.html'
+	});
+
 })
 .config(['$translateProvider', function($translateProvider) {
 	$translateProvider.useStaticFilesLoader({
@@ -97,6 +113,14 @@ var app = angular.module("app", [
 		return JSON.stringify(input, null, "\t");
 	}
 }).run(function() {
+
+// added ECMA6 startsWith ( currently only FireFox support it)
+if (typeof String.prototype.startsWith != 'function') {
+	// see below for better implementation!
+	String.prototype.startsWith = function (str){
+		return this.indexOf(str) == 0;
+	};
+}
 
 	// fix jQuery.param space encoding bug
 	// temporary

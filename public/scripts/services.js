@@ -42,17 +42,20 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	var meta = {
 		loaded: false,
 		online: true,
-		page_title: "",
-		pageParams: {}, // updated by ng-view controller 
+		pageParams: {}, // updated by ui-view controller 
 	};
 	
 	meta.root_url = $location.protocol() + '://' +  $location.host() + ($location.port() != ( $location.protocol() == "http" ? 80 : 443 ) ? ':' + $location.port() : '') + $("base").attr("href");
 	meta.api_root = "api/";
 	
-	$rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-		if( current.$$route )
-			meta.page_title = current.$$route.title;
-		meta.page_id = $location.path();
+	var disabledDisqusPagesPrefix = ['/admin', '/config'];
+	$rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+		var pageLocationPath = $location.path();
+		meta.disqusId = disabledDisqusPagesPrefix.every(function(disabledPage) {
+			return !pageLocationPath.startsWith(disabledPage);
+		}) ? pageLocationPath : '';
+		console.log('disqusId changed', meta.disqusId);
+		
 		if( config.env == 'development' && !config.disableAppcache ) {
 			$window.applicationCache.update(); // Attempt to update the user's cache.
 		}

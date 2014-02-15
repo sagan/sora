@@ -1,5 +1,5 @@
 
-app.controller("AppController", function($scope, $modal, $location, $window, $element, $translate, $compile, AppService) {
+app.controller("AppController", function($scope, $state, $modal, $location, $window, $element, $translate, $compile, AppService) {
 
 	$scope.config = AppService.config;
 	$scope.meta = AppService.meta;
@@ -18,8 +18,8 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 	
 	$scope.title = function() {
 		var title = '';
-		if( $scope.meta.page_title != 'Dashboard' ) {
-			var transactionId = $scope.titleTranslateIds[$scope.meta.page_title] || $scope.meta.page_title;
+		if( $state.current.title != 'Dashboard' ) {
+			var transactionId = $scope.titleTranslateIds[$state.current.title] || $state.current.title;
 			if( transactionId )
 				title += $translate(transactionId, $scope.meta.pageParams);
 		}
@@ -39,7 +39,7 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 			if( $scope.config.disqus_shortname ) {
 				// disqus enabled, load it
 				var disqus_pane = $('#disqus');//JQuery request for the app pane element.
-				disqus_pane.html('<div disqus="meta.page_id"></div>');//The dynamically loaded data
+				disqus_pane.html('<div disqus="meta.disqusId"></div>');//The dynamically loaded data
 				$compile(disqus_pane.contents())($scope);
 			}
 		}
@@ -49,7 +49,7 @@ app.controller("AppController", function($scope, $modal, $location, $window, $el
 
 app.controller("NavibarController", function($scope, $location, FileService) {
 	$scope.isActive = function (viewLocation) {
-		return viewLocation === $location.path();
+		return $location.path().startsWith(viewLocation);
 	};
 	
 	$scope.search = function() {
@@ -75,13 +75,13 @@ app.controller("TagsController", function($scope, TagService, FileService) {
 	
 });
 
-app.controller("FilesController", function($scope, $routeParams, $location, FileService) {
+app.controller("FilesController", function($scope, $stateParams, $location, FileService) {
 	$scope.files = [];
-	$scope.condition = $routeParams;
+	$scope.condition = $stateParams;
 	
 	$scope.default_per_page = 20;
-	$scope.per_page = $routeParams.limit || $scope.default_per_page;
-	$scope.current_page = Math.floor( ($routeParams.skip || 0) / $scope.per_page) + 1;
+	$scope.per_page = $stateParams.limit || $scope.default_per_page;
+	$scope.current_page = Math.floor( ($stateParams.skip || 0) / $scope.per_page) + 1;
 	$scope.count_all = $scope.current_page * $scope.per_page;
 	
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
@@ -133,12 +133,12 @@ app.controller("FilesController", function($scope, $routeParams, $location, File
 	
 });
 
-app.controller("FileController", function($modal, $scope, $window, $routeParams, $location, FileService, AppService) {
+app.controller("FileController", function($modal, $scope, $state, $window, $stateParams, $location, FileService, AppService) {
 
 	$scope.get_raw_url = FileService.get_raw_url;
 	$scope.get_download_url = FileService.get_download_url;
 
-	$scope.file = FileService.get($routeParams.id);
+	$scope.file = FileService.get($stateParams.id);
 	
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
 
@@ -164,14 +164,14 @@ app.controller("FileController", function($modal, $scope, $window, $routeParams,
 	});
 });
 
-app.controller("DashboardController", function($scope, $routeParams, FileService) {
+app.controller("DashboardController", function($scope, $stateParams, FileService) {
 
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
 	$scope.files = FileService.query({sort: "modified", order: -1, limit: 10}).items;
 });
 
-app.controller("NotesController", function($scope, $routeParams, NoteService) {
+app.controller("NotesController", function($scope, $stateParams, NoteService) {
 
 	$scope.condition = {};
 
