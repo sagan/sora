@@ -63,7 +63,8 @@ CACHE:
 /templates/navibar.html
 /templates/header.html
 /templates/admin.html
-/templates/admin.basic.html
+/templates/admin.dashboard.html
+/templates/admin.config.html
 /templates/admin.system.html
 
 /stylesheets/style.css?v=0.0.1
@@ -84,5 +85,6 @@ CACHE:
 /about
 /config
 /admin
-/admin/basic
+/admin/dashboard
 /admin/system
+/admin/config

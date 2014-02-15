@@ -5,7 +5,7 @@ app.controller("AppController", function($scope, $state, $modal, $location, $win
 	$scope.meta = AppService.meta;
 
 	$scope.titleTranslateIds = {
-		'File' : 'FILE_LABEL',	
+		'File' : 'FILE_LABEL',
 	};
 	
 	$scope.signIn = function() {
@@ -14,6 +14,10 @@ app.controller("AppController", function($scope, $state, $modal, $location, $win
 	
 	$scope.signOut = function() {
 		location.href='logout';	
+	};
+	
+	$scope.isStateActive = function (state) {
+		return $state.current.name.startsWith(state);
 	};
 	
 	$scope.title = function() {
@@ -47,16 +51,14 @@ app.controller("AppController", function($scope, $state, $modal, $location, $win
 
 });
 
-app.controller("NavibarController", function($scope, $location, FileService) {
-	$scope.isActive = function (viewLocation) {
-		return $location.path().startsWith(viewLocation);
-	};
-	
+app.controller("NavibarController", function($scope, $state, $location, FileService) {
+
 	$scope.search = function() {
 		console.log( FileService.get_files_list_url({search: $scope.keyword}) );
 		$location.path("files");
 		$location.search("search", $scope.keyword);
 	};
+	
 });
 
 app.controller("TagsController", function($scope, TagService, FileService) {

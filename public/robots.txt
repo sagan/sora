@@ -3,6 +3,7 @@ User-Agent: *
 
 #Disallow: /files
 Disallow: /api/
+Disallow: /admin/
 
 Disallow: /libs/
 Disallow: /components/

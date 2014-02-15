@@ -40,18 +40,23 @@ var app = angular.module("app", [
 		title: "Notes",
 		url: "/notes",
 		templateUrl: 'templates/notes.html'
-	}).state('admin', {
-		title: "Admin",
+	}).state('admin', { // admin state and sub states
+		title: "Control Panel",
 		url: "/admin",
+		abstract: true,
 		templateUrl: 'templates/admin.html'
-	}).state('admin.basic', {
-		title: "Admin Basic",
-		url: "/basic",
-		templateUrl: 'templates/admin.basic.html'
+	}).state('admin.dashboard', {
+		title: "Control Panel",
+		url: "/dashboard",
+		templateUrl: 'templates/admin.dashboard.html'
 	}).state('admin.system', {
-		title: "Admin System",
+		title: "Control Panel",
 		url: "/system",
 		templateUrl: 'templates/admin.system.html'
+	}).state('admin.config', {
+		title: "Control Panel",
+		url: "/config",
+		templateUrl: 'templates/admin.config.html'
 	}).state('files/:id', {
 		title: "File",
 		url: "/files/:id",

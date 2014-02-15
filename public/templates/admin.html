@@ -1,11 +1,14 @@
 
-<div>
-	<h2>{{"Admin" | translate}}</h2>
-	<a ui-sref="admin">Admin Dashboard</a>
-	<a ui-sref="admin.basic">Basic</a>
-	<a ui-sref="admin.system">System</a>
-	<div>
-		Hello World	
+<div ng-controller="AdminController">
+	<h2>{{"Control Panel" | translate}}</h2>
+	<div class="row">
+		<div class="col-md-3">
+			<ul class="nav nav-pills nav-stacked">
+				<li ng-class="{active: isStateActive('admin.dashboard')}"><a ui-sref="admin.dashboard">{{ 'Dashboard' | translate }}</a></li>
+				<li ng-class="{active: isStateActive('admin.system')}"><a ui-sref="admin.system">{{ 'System' | translate }}</a></li>
+				<li ng-class="{active: isStateActive('admin.config')}"><a ui-sref="admin.config">{{ 'Config' | translate }}</a></li>
+			</ul>
+		</div>
+		<div class="col-md-9" ui-view autoscroll="true"></div>
 	</div>
-	<div ui-view autoscroll="true"></div>
 </div>

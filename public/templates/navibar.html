@@ -8,15 +8,14 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a ng-class="{ active: isActive('/')}" class="navbar-brand" ui-sref="dashboard">{{"Dashboard" | translate}}</a>
+      <a ng-class="{ active: isStateActive('dashboard')}" class="navbar-brand" ui-sref="dashboard">{{"Dashboard" | translate}}</a>
     </div>
-
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      	<li ng-class="{ active: isActive('/files')}" class=""><a ui-sref="files">{{"Files" | translate}}</a></li>
-        <li ng-class="{ active: isActive('/tags')}" class=""><a ui-sref="tags">{{"Tags" | translate}}</a></li>
-        <li ng-class="{ active: isActive('/notes')}" class=""><a ui-sref="notes">{{"Notes" | translate}}</a></li>
+      	<li ng-class="{ active: isStateActive('files')}" class=""><a ui-sref="files">{{"Files" | translate}}</a></li>
+        <li ng-class="{ active: isStateActive('tags')}" class=""><a ui-sref="tags">{{"Tags" | translate}}</a></li>
+        <li ng-class="{ active: isStateActive('notes')}" class=""><a ui-sref="notes">{{"Notes" | translate}}</a></li>
       </ul>
       <form class="navbar-form navbar-left" role="search" ng-submit="search()">
         <div class="form-group">
@@ -25,14 +24,14 @@
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> {{"Submit" | translate}}</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
-      	<li ng-class="{ active: isActive('/admin')}"><a ui-sref="admin">{{"Admin" | translate}}</a></li>
+      	<li ng-show='config.userRole == "admin"' ng-class="{ active: isStateActive('admin')}"><a ui-sref="admin.dashboard">{{"Admin" | translate}}</a></li>
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown">{{"More" | translate}} <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li ng-class="{ active: isActive('/config')}"><a ui-sref="config">{{"Config" | translate}}</a></li>
-            <li ng-class="{ active: isActive('/help')}"><a ui-sref="help">{{"Help" | translate}}</a></li>
+            <li ng-class="{ active: isStateActive('config')}"><a ui-sref="config">{{"Config" | translate}}</a></li>
+            <li ng-class="{ active: isStateActive('help')}"><a ui-sref="help">{{"Help" | translate}}</a></li>
             <li class="divider"></li>
-            <li ng-class="{ active: isActive('/about')}"><a ui-sref="about">{{"About" | translate}}</a></li>
+            <li ng-class="{ active: isStateActive('about')}"><a ui-sref="about">{{"About" | translate}}</a></li>
           </ul>
         </li>
       </ul>
