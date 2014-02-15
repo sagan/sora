@@ -51,12 +51,14 @@ app.controller("AppController", function($scope, $state, $modal, $location, $win
 
 });
 
-app.controller("NavibarController", function($scope, $state, $location, FileService) {
-
+app.controller("NavibarController", function($scope, $state, FileService) {
+	
+	$scope.keyword = '';
+	
 	$scope.search = function() {
 		console.log( FileService.get_files_list_url({search: $scope.keyword}) );
-		var keyword = $scope.keyword.trim();
-		$state.go ('files', { search: keyword || null, tags: null, limit: null, skip: null } );
+		var keyword = $scope.keyword ? $scope.keyword.trim() : null;
+		$state.go ('files', { search: keyword, tags: null, limit: null, skip: null } );
 	};
 	
 });
