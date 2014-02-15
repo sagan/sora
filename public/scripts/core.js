@@ -2,7 +2,9 @@
 'use strict';
 
 var app = angular.module("app", [
-	'ui.bootstrap', 'ngRoute',
+	'ui.bootstrap',
+	'ui.router',
+	'ngRoute',
 	'ngAnimate',
 	'hljs',
 	'pascalprecht.translate',
@@ -33,6 +35,10 @@ var app = angular.module("app", [
 		title: "Notes",
 		reloadOnSearch: true,
 		templateUrl: 'templates/notes.html'
+	}).when('/admin', {
+		title: "Admin",
+		reloadOnSearch: true,
+		templateUrl: 'templates/admin.html'
 	}).when('/files/:id', {
 		title: "File",
 		templateUrl: 'templates/file.html'

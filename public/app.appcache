@@ -24,6 +24,7 @@ CACHE:
 /components/jquery/jquery.min.js?v=2.1.0
 /components/angular/angular.min.js?v=1.2.12
 
+/scripts/angular-ui-router.min.js
 /components/showdown/compressed/showdown.js?v=0.3.1
 /components/showdown/compressed/extensions/github.js?v=0.3.1
 /components/angular-markdown/angular.markdown.js?v=0.0.1
@@ -79,4 +80,5 @@ CACHE:
 /notes
 /about
 /config
+/admin
 

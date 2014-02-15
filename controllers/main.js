@@ -35,17 +35,6 @@ var initConfigRoute = function(req, res) {
 };
 
 var bind_routers = function(app, prefix) {
-	app.get('/', appRoute);
-	app.get("/tags", appRoute);
-	app.get("/files", appRoute);
-	app.get("/notes", appRoute);
-	app.get("/config", appRoute);
-	app.get("/help", appRoute);
-	app.get("/about", appRoute);
-	app.get("/dashboard", appRoute);
-	app.get("/files/:id", appRoute);
-	
-	app.get('/init', initConfigRoute);
 
 	app.get(prefix + 'config', function(req, res){
 		res.json({
@@ -64,6 +53,10 @@ var bind_routers = function(app, prefix) {
 		});
 	});
 	app.get(prefix + 'online', onlineRoute);
+	
+	// default route for app html bootstrap template, use it at last.
+	app.get('/*', appRoute);
+	
 };
 
 exports.bind_routers = bind_routers;
