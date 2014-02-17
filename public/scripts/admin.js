@@ -58,13 +58,47 @@ app.controller('AdminConfigController', ['$scope', '$q', 'AdminService', functio
 	
 }]);
 
-app.controller('AdminNotesController', ['$scope', '$q', 'AdminService', 'NoteService', function($scope, $q, AdminService, NoteService) {
+app.controller('AdminNoteEditController', ['$scope', '$q', 'AdminService', 'NoteService', function($scope, $q, AdminService, NoteService) {
 	
 	$scope.appConfig = AdminService.getAppConfig();
 
 	$scope.createNote = function() {
 		NoteService.create({title: 'xxx', content: 'sfsdfdsf'});
 	};
+	
+}]);
+
+app.controller('AdminNotesController', ['$scope', '$q', '$stateParams', 'AdminService', 'NoteService', function($scope, $q, $stateParams, AdminService, NoteService) {
+	
+	$scope.appConfig = AdminService.getAppConfig();
+
+	$scope.condition = {};
+
+	$scope.perPage = 20;
+	$scope.currentPage = 1;
+	$scope.countAll = 0;
+	
+
+	$scope.changeCurrentNote = function(index) {
+		$scope.currentNote = $scope.notes[index];
+	};
+
+	var loadNotesList = function() {
+		var query = angular.copy($scope.condition);
+		query.limit = $scope.perPage;
+		query.skip = ( $scope.currentPage - 1 ) * $scope.perPage;
+		var query_result = NoteService.query(query, function() {
+			$scope.countAll = query_result.count_all;
+			$scope.changeCurrentNote(0);
+		});
+		$scope.notes = query_result.items;
+		$scope.countAll = query_result.count_all;
+		$scope.changeCurrentNote(0);
+	};
+
+	$scope.$watch("currentPage", loadNotesList);
+
+
 	
 }]);
 

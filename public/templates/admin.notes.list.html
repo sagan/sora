@@ -1,0 +1,26 @@
+
+<div ng-controller="AdminNotesController">
+	<div>
+		<p>
+			<a ui-sref="admin.notes.create" class="btn btn-primary">{{ 'Create' | translate }}</a>
+		</p>
+	</div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th width="100%">{{"Title" | translate}}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="note in notes | filter: filter">
+				<td>
+					<span><span><a  title=''>{{note.title}}</a></span></span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<pagination rotate="false" boundary-links="true" max-size="10" total-items="countAll" page="currentPage" items-per-page="perPage"></pagination>
+
+
+</div>
+
