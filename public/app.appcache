@@ -67,6 +67,8 @@ CACHE:
 /templates/admin.config.html
 /templates/admin.system.html
 /templates/admin.notes.html
+/templates/admin.notes.list.html
+/templates/admin.notes.create.html
 
 /stylesheets/style.css?v=0.0.1
 /scripts/core.js?v=0.0.1
