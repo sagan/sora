@@ -66,6 +66,7 @@ CACHE:
 /templates/admin.dashboard.html
 /templates/admin.config.html
 /templates/admin.system.html
+/templates/admin.notes.html
 
 /stylesheets/style.css?v=0.0.1
 /scripts/core.js?v=0.0.1

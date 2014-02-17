@@ -56,6 +56,10 @@ var app = angular.module("app", [
 		title: "Control Panel",
 		url: "/config",
 		templateUrl: 'templates/admin.config.html'
+	}).state('admin.notes', {
+		title: "Notes",
+		url: "/notes",
+		templateUrl: 'templates/admin.notes.html'
 	}).state('files/:id', {
 		title: "File",
 		url: "/files/:id",

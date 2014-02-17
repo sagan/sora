@@ -83,8 +83,10 @@ exports.init = function(app) {
 	
 	app.use(express.cookieParser(mainConfig.secretToken));
 	app.use(express.session( {store: new MongoStore({
-		url: mainConfig.mongodb_link + '/sessions'
-  })}));
+		url: mainConfig.mongodb_link + '/sessions',
+	}), cookie: {
+		maxAge: 10 * 365 * 86400 * 1000,	
+	}}));
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.use("/components", express.static(path.join(__dirname, 'bower_components')));
 	

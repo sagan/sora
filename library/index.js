@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var mime = require('mime');
 var db = mongoose.connection;
 
+var fsutil = require('./fsutil');
 var config = require('../config');
 var database = require('../database');
 

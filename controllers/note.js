@@ -20,6 +20,10 @@ var save = function(req, res) {
     res.send(200);
 };
 
+var create = function(req, res) {
+	console.log('create note interface', req.body);
+};
+
 var query = function(req, res) {
  	var condition = {};
 	if( req.query.tags ) {
@@ -71,8 +75,10 @@ var remove = function(req, res) {
 var bind_routers = function(app, prefix) {
 	app.get(prefix + 'notes/:id', checkAuthorize('public'), get);
 	app.get(prefix + 'notes', checkAuthorize('public'), query);
-	app.post(prefix + 'notes/:id', checkAuthorize('public'), save);
-	app.delete(prefix + 'notes/:id', checkAuthorize('public'), remove);
+
+	app.put(prefix + 'notes/:id', checkAuthorize('admin'), save);
+	app.put(prefix + 'notes', checkAuthorize('admin'), create);
+	app.delete(prefix + 'notes/:id', checkAuthorize('admin'), remove);
 };
 
 exports.bind_routers = bind_routers;

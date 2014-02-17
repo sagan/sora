@@ -8,8 +8,12 @@ var checkAuthorize = require('./auth').checkAuthorize;
 
 var query = function(req, res, next) {
 	var condition = {};
-	if( req.query.tags )
-		condition.tags = req.query.tags;
+	if( req.query.tags ) {
+		if( typeof req.query.tags == 'string' )
+			condition.tags = req.query.tags.split(/,\s*/);
+		else //array
+			condition.tags = req.query.tags;
+	}
 	if( req.query.search )
 		condition.search = req.query.search;
 	
@@ -55,6 +59,16 @@ var get = function(req, res, next) {
 	});
 };
 
+var getBySha1 = function(req, res, next) {
+	File.findOne({sha1: req.params.sha1}, function(err, file) {
+		if (err || !file) {
+			console.log(err);
+			return res.send(404);
+		}
+		return res.sendfile(path.join(config.library_path, file.path, file.name));
+	});
+};
+
 var raw_file = function(req, res, next) {
 	File.find({_id: req.params.id}, function(err, files) {
 		if (err) {
@@ -81,6 +95,7 @@ var bind_routers = function(app, prefix) {
 	//app.post(prefix + 'file/:id', checkAuthorize('admin'), save);
 	//app.delete(prefix + 'file/:id', checkAuthorize('admin'), remove);
 	
+	app.get('/:sha1([a-z0-9]{40})', checkAuthorize('public'), getBySha1);
 	app.get(prefix + 'files/:id/raw', checkAuthorize('public'), raw_file);
 	app.get(prefix + 'files/:id/raw/*', checkAuthorize('public'), raw_file);
 	app.get(prefix + 'files/:id/download', checkAuthorize('public'), download_file);

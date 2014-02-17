@@ -6,6 +6,7 @@ var note_scheme = new mongoose.Schema({
 	scheme_version: Number,
 	content: String,
 	tags: [String],
+	fileTags: [String], //attachments tags
 	modified: Date,
 	// note type: html, md, etc
 	type: String,	

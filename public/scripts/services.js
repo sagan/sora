@@ -15,8 +15,7 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	};
 	CacheWrapper.prototype.update = function(key, value, callback) {
 		var old_value = this._cache.get(key);
-		if( typeof old_value == 'undefined' ) {
-			this._cache.put(key, value);
+		if( typeof old_value == 'undefined' ) { this._cache.put(key, value);
 		} else {
 			angular.copy(value, old_value);
 		}
@@ -271,6 +270,22 @@ app.factory('NoteService', function($q, $http, AppService) {
 	var data = AppService.data;
 	var meta = AppService.meta;
 
+	var create = function(note, callback) {
+		$http({
+			url: meta.api_root + 'notes',
+			method: "PUT",
+			data: JSON.stringify(note),
+			headers: {'Content-Type': 'application/json'}
+		}).success(function (result, status, headers, config) {
+			if( !result.error ) {
+				callback(null, result.item);	
+			} else {
+				callback(result.error);	
+			}
+		}).error(function (result, status, headers, config) {
+			callback(1);
+		});
+	};
 
 	var get = function(id, callback) {
 		callback = callback || angular.noop;
@@ -280,7 +295,7 @@ app.factory('NoteService', function($q, $http, AppService) {
 				storage.update(id, result.item);
 				callback(null, storage.get(id));
 			} else {
-				callack(1);
+				callack(result.error);
 			}
 		}).error(function(result, status, headers, httpconfig) {
 			callback(1);
@@ -336,6 +351,7 @@ app.factory('NoteService', function($q, $http, AppService) {
 	};
 
 	NoteService.get = get;
+	NoteService.create = create;
 	NoteService.query = query;
 
 	return NoteService;

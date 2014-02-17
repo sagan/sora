@@ -57,3 +57,14 @@ app.controller('AdminConfigController', ['$scope', '$q', 'AdminService', functio
 	$scope.appConfig = AdminService.getAppConfig();
 	
 }]);
+
+app.controller('AdminNotesController', ['$scope', '$q', 'AdminService', 'NoteService', function($scope, $q, AdminService, NoteService) {
+	
+	$scope.appConfig = AdminService.getAppConfig();
+
+	$scope.createNote = function() {
+		NoteService.create({title: 'xxx', content: 'sfsdfdsf'});
+	};
+	
+}]);
+
