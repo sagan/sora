@@ -58,12 +58,27 @@ app.controller('AdminConfigController', ['$scope', '$q', 'AdminService', functio
 	
 }]);
 
-app.controller('AdminNoteEditController', ['$scope', '$q', 'AdminService', 'NoteService', function($scope, $q, AdminService, NoteService) {
+app.controller('AdminNoteEditController', ['$scope', '$q', '$stateParams', 'AdminService', 'NoteService', function($scope, $q, $stateParams, AdminService, NoteService) {
 	
 	$scope.appConfig = AdminService.getAppConfig();
 
-	$scope.createNote = function() {
-		NoteService.create({title: 'xxx', content: 'sfsdfdsf'});
+	$scope.saved = function() {
+		return angular.equals($scope.note, $scope.editNote);
+	};
+
+	$scope.editNote = {};
+	$scope.note = $stateParams.id ? NoteService.get($stateParams.id, function(err, note) {
+		$scope.editNote = angular.copy($scope.note);
+	}) : {};
+
+
+	$scope.save = function() {
+		NoteService.createOrUpdate($scope.editNote, function(err, updatedNote) {
+			if( !err ) {
+				$scope.note = updatedNote;
+				$scope.editNote = angular.copy(updatedNote);
+			}
+		});
 	};
 	
 }]);

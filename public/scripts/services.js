@@ -271,6 +271,7 @@ app.factory('NoteService', function($q, $http, AppService) {
 	var meta = AppService.meta;
 
 	var create = function(note, callback) {
+		var resultNote = angular.copy(note);
 		$http({
 			url: meta.api_root + 'notes',
 			method: "PUT",
@@ -278,13 +279,39 @@ app.factory('NoteService', function($q, $http, AppService) {
 			headers: {'Content-Type': 'application/json'}
 		}).success(function (result, status, headers, config) {
 			if( !result.error ) {
-				callback(null, result.item);	
+				angular.copy(result.item, resultNote);
+				callback(null, resultNote);	
 			} else {
 				callback(result.error);	
 			}
 		}).error(function (result, status, headers, config) {
 			callback(1);
 		});
+		return resultNote;
+	};
+
+	var update = function(note, callback) {
+		var resultNote = angular.copy(note);
+		$http({
+			url: meta.api_root + 'notes/' + note._id,
+			method: "PUT",
+			data: JSON.stringify(note),
+			headers: {'Content-Type': 'application/json'}
+		}).success(function (result, status, headers, config) {
+			if( !result.error ) {
+				angular.copy(result.item, resultNote);
+				callback(null, resultNote);
+			} else {
+				callback(result.error);	
+			}
+		}).error(function (result, status, headers, config) {
+			callback(1);
+		});
+		return resultNote;
+	};
+
+	var createOrUpdate = function(note, callback) {
+		return note._id ? update(note, callback) : create(note, callback);
 	};
 
 	var get = function(id, callback) {
@@ -352,6 +379,8 @@ app.factory('NoteService', function($q, $http, AppService) {
 
 	NoteService.get = get;
 	NoteService.create = create;
+	NoteService.update = update;
+	NoteService.createOrUpdate = createOrUpdate;
 	NoteService.query = query;
 
 	return NoteService;

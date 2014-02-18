@@ -13,7 +13,7 @@
 		<div class="form-group">
 			<input type="text" ng-model="editNote.fileTags" class="form-control" placeholder="{{ ' File Tags' | translate}}">
 		</div>
-		<button class="btn btn-primary" ng-click="createNote()">{{'Save' | translate  }}</button>
+		<button ng-disabled="saved()" class="btn btn-primary" ng-click="save()">{{'Save' | translate  }}</button>
 	</form>
 </div>
 

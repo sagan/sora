@@ -67,7 +67,11 @@ var app = angular.module("app", [
 	}).state('admin.notes.create', {
 		title: "Note",
 		url: "/create",
-		templateUrl: 'templates/admin.notes.create.html'
+		templateUrl: 'templates/admin.notes.update.html'
+	}).state('admin.notes.edit', {
+		title: "Note",
+		url: "/:id/edit",
+		templateUrl: 'templates/admin.notes.update.html'
 	}).state('files/:id', {
 		title: "File",
 		url: "/files/:id",

@@ -6,6 +6,8 @@ var db = mongoose.connection;
 var Note = db.model('Note');
 var checkAuthorize = require('./auth').checkAuthorize;
 
+var database = require('../database');
+
 var get = function(req, res) {
     	Note.findOne({_id: req.params.id}, function(err, note) {
 		if(err || !note) {
@@ -17,11 +19,43 @@ var get = function(req, res) {
 };
 
 var save = function(req, res) {
-    res.send(200);
+	var updateNote = new Note(req.body);
+	Note.findOne({_id: req.params.id}, function(err, oldNote) {
+		if( err ) {
+			res.send(500);
+		} else if( !oldNote ) {
+			res.send(404);
+		} else {
+			oldNote.modified = new Date;
+			oldNote.scheme_version = database.SCHEME_VERSION_NOTE;
+			var fields = ['title', 'content', 'tags', 'fileTags'];
+			fields.forEach(function(field) {
+				oldNote[field] = updateNote[field];
+			});
+			oldNote.save(function(err, updatedNote) {
+				if( err ) {
+					console.log(err);
+					res.send(500);
+				}
+				else
+					res.send({item: updatedNote});	
+			});
+		}
+	});
 };
 
 var create = function(req, res) {
 	console.log('create note interface', req.body);
+	var createNote = new Note(req.body);
+	createNote.modified = new Date();
+	createNote.scheme_version = database.SCHEME_VERSION_NOTE;
+	createNote.save(function(err, createdNote) {
+		if(err) {
+			res.send(500);
+		} else {
+			res.send({item: createdNote});	
+		}	
+	});
 };
 
 var query = function(req, res) {
@@ -40,7 +74,7 @@ var query = function(req, res) {
 	var skip = req.query.skip || 0;
 	var limit = req.query.limit || 20;
 	var sort = {};
-	sort[req.query.sort || 'modified'] = req.query.order || 1;
+	sort[req.query.sort || 'modified'] = req.query.order || -1;
 		
 	if( condition.search ) {
 		Note.textSearch(condition.search, function(err, output) {

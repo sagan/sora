@@ -14,7 +14,7 @@
 		<tbody>
 			<tr ng-repeat="note in notes | filter: filter">
 				<td>
-					<span><span><a  title=''>{{note.title}}</a></span></span>
+					<span><span><a ui-sref="admin.notes.edit({id: note._id})" title=''>{{note.title}}</a></span></span>
 				</td>
 			</tr>
 		</tbody>
