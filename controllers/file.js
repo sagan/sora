@@ -95,7 +95,8 @@ var bind_routers = function(app, prefix) {
 	//app.post(prefix + 'file/:id', checkAuthorize('admin'), save);
 	//app.delete(prefix + 'file/:id', checkAuthorize('admin'), remove);
 	
-	app.get('/:sha1([a-z0-9]{40})', checkAuthorize('public'), getBySha1);
+	app.get('/:sha1([a-f0-9]{40})', checkAuthorize('public'), getBySha1);
+	app.get('/:id([a-f0-9]{24})', checkAuthorize('public'), raw_file);
 	app.get(prefix + 'files/:id/raw', checkAuthorize('public'), raw_file);
 	app.get(prefix + 'files/:id/raw/*', checkAuthorize('public'), raw_file);
 	app.get(prefix + 'files/:id/download', checkAuthorize('public'), download_file);

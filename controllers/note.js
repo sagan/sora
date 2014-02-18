@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var config = require('../config');
 var db = mongoose.connection;
 var Note = db.model('Note');
+var File = db.model('File');
 var checkAuthorize = require('./auth').checkAuthorize;
 
 var database = require('../database');
@@ -13,8 +14,27 @@ var get = function(req, res) {
 		if(err || !note) {
 			console.log(err);
 			return res.send(503);
+		} else {
+			if( note.fileTags ) {
+				File.find({tags: {'$all': note.fileTags}, mime: /^image\//}, function(err, files) {
+					var images = [];
+					if( !err ) {
+						files.forEach(function(file) {
+							images.push(file._id);
+						});
+					}
+					var _note = {};
+					Object.keys(note).forEach(function(key) {
+						_note[key] = note[key];
+					});
+					_note.images = images;
+					console.log('note:', note, images);
+					return res.json({item: note});
+				});
+			}
+			else
+				return res.json({item: note});
 		}
-		return res.json({item: note});
 	});
 };
 

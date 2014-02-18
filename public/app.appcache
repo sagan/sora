@@ -18,6 +18,7 @@ NETWORK:
 CACHE:
 /components/bootstrap/dist/css/bootstrap.min.css?v=3.0.3
 /components/bootstrap/dist/css/bootstrap-theme.min.css?v=3.0.3
+/components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css
 /components/highlightjs/styles/default.css?v=8.0.0
 /components/offline/themes/offline-theme-chrome.css?v=0.5.0
 
@@ -50,6 +51,8 @@ CACHE:
 /components/pdfjs-build/generic/web/compatibility.js
 /components/angular-gravatar/build/md5.min.js
 /components/angular-gravatar/build/angular-gravatar.min.js
+/components/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js
+/components/bootstrap-tagsinput/dist/bootstrap-tagsinput-angular.js
 /scripts/ng-pdfviewer.js
 
 /templates/dashboard.html

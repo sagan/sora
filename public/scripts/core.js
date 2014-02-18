@@ -13,6 +13,7 @@ var app = angular.module("app", [
 	'angular-markdown',
 	'ngPDFViewer',
 	'ui.gravatar',
+	'bootstrap-tagsinput',
 ])
 .config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 		

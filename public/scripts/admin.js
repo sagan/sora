@@ -63,13 +63,14 @@ app.controller('AdminNoteEditController', ['$scope', '$q', '$stateParams', 'Admi
 	$scope.appConfig = AdminService.getAppConfig();
 
 	$scope.saved = function() {
-		return angular.equals($scope.note, $scope.editNote);
+		return angular.equals($scope.note, $scope.editNote, true);
 	};
 
-	$scope.editNote = {};
+	$scope.editNote = {tags: []};
+
 	$scope.note = $stateParams.id ? NoteService.get($stateParams.id, function(err, note) {
 		$scope.editNote = angular.copy($scope.note);
-	}) : {};
+	}) : {tags: []};
 
 
 	$scope.save = function() {
@@ -79,6 +80,11 @@ app.controller('AdminNoteEditController', ['$scope', '$q', '$stateParams', 'Admi
 				$scope.editNote = angular.copy(updatedNote);
 			}
 		});
+	};
+
+	$scope.tags = ["a", "b"];
+	$scope.getTagClass = function(tag) {
+		return 'label label-info';
 	};
 	
 }]);

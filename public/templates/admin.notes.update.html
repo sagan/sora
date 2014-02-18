@@ -8,10 +8,10 @@
 			<textarea placeholder="{{'Content' | translate}}" ng-model="editNote.content" class="form-control" rows="20"></textarea>
 		</div>
 		<div class="form-group">
-			<input type="text" ng-model="editNote.tags" class="form-control" placeholder="{{ ' Tags' | translate}}">
+			Tags: <bootstrap-tagsinput tagclass="getTagClass" ng-model="editNote.tags"></bootstrap-tagsinput>
 		</div>
 		<div class="form-group">
-			<input type="text" ng-model="editNote.fileTags" class="form-control" placeholder="{{ ' File Tags' | translate}}">
+			File Tags: <bootstrap-tagsinput tagclass="getTagClass" ng-model="editNote.fileTags"></bootstrap-tagsinput>
 		</div>
 		<button ng-disabled="saved()" class="btn btn-primary" ng-click="save()">{{'Save' | translate  }}</button>
 	</form>
