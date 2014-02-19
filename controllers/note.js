@@ -24,12 +24,12 @@ var get = function(req, res) {
 						});
 					}
 					var _note = {};
-					Object.keys(note).forEach(function(key) {
+					var fields = ['_id', 'title', 'content', 'tags', 'fileTags', 'modified'];
+					fields.forEach(function(key) {
 						_note[key] = note[key];
 					});
-					_note.images = images;
-					console.log('note:', note, images);
-					return res.json({item: note});
+					_note._images = images;
+					return res.json({item: _note});
 				});
 			}
 			else

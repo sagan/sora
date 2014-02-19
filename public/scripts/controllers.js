@@ -185,7 +185,8 @@ app.controller("NotesController", function($scope, $stateParams, NoteService) {
 	
 
 	$scope.changeCurrentNote = function(index) {
-		$scope.currentNote = $scope.notes[index];
+		if( $scope.notes && (index <= $scope.notes.length - 1) )
+			$scope.currentNote = NoteService.get($scope.notes[index]._id);
 	};
 
 	var loadNotesList = function() {

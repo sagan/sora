@@ -18,7 +18,7 @@ a {
 }
 
 /* image fix parent width */
-div[ng-controller="FileController"] img {
+img {
 	max-width:100%;	
 }
 

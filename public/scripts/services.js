@@ -15,7 +15,8 @@ app.factory('AppService', function($rootScope, $q, $location, $http, $window, lo
 	};
 	CacheWrapper.prototype.update = function(key, value, callback) {
 		var old_value = this._cache.get(key);
-		if( typeof old_value == 'undefined' ) { this._cache.put(key, value);
+		if( typeof old_value == 'undefined' ) {
+			this._cache.put(key, value);
 		} else {
 			angular.copy(value, old_value);
 		}
@@ -319,6 +320,7 @@ app.factory('NoteService', function($q, $http, AppService) {
 		
 		$http({method: 'GET', url: meta.api_root + 'notes/' + id}).success(function(result, status, headers, httpconfig) {
 			if( !result.error ) {
+				console.log('note---', result.item);
 				storage.update(id, result.item);
 				callback(null, storage.get(id));
 			} else {

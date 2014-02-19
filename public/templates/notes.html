@@ -44,8 +44,17 @@
 			</div>
 			<div class="panel-body">
 				<markdown extensions="github" ng-model="currentNote.content"></markdown>
+				<div>
+					<img ng-repeat="image in currentNote._images" ng-src="{{image}}" />
+				</div>
 			</div>
-			<div class="panel-footer"><span ng-if='currentNote.modified'>{{currentNote.modified | date:'medium'}}</span></div>
+			<div class="panel-footer">
+				<span class="label label-default">{{'Tags' | translate}}</span>
+				<ul class="list list-inline" style="display: inline;">
+					<li ng-repeat="tag in currentNote.tags"><a href="#" class="label label-tag label-info">{{tag}}</a></li>
+				</ul>
+				<span ng-if='currentNote.modified'>{{currentNote.modified | date:'medium'}}</span>
+			</div>
 		</div>
 		</div>
     	</div>
