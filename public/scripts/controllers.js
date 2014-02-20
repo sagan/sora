@@ -172,7 +172,7 @@ app.controller("DashboardController", function($scope, $stateParams, FileService
 
 	$scope.get_tag_url = FileService.get_files_list_tag_url;
 	
-	$scope.files = FileService.query({sort: "modified", order: -1, limit: 10}).items;
+	$scope.files = FileService.query({sort: "mtime", order: -1, limit: 10}).items;
 });
 
 app.controller("NotesController", function($scope, $stateParams, NoteService) {

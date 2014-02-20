@@ -39,7 +39,9 @@ exports.init = function(app) {
 	config.adminGoogleAccount = '';
 	config.mongodb_link = 'mongodb://localhost/sora';
 	config.secretToken = 'your secret here';
-	config.library_path = '';
+	config.libraries = {
+		'default': {path: '/tmp'},
+	};
 	config.libraryControlFileName = '.sora.json';
 	config.disableAppcache = false;
 	config.env = 'development';

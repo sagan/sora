@@ -70,6 +70,17 @@ config.adminGoogleAccount = '';
 config.mongodb_link = 'mongodb://localhost/sora';
 
 /*
+ * The libraries path where your files are located in.
+ * Sora will watch this path and index all files in it.
+ *
+ * format: name -> path
+ *
+ */
+config.libraries = {
+	'default': {path: '/tmp'},
+};
+
+/*
  * The library path where your files are located in.
  * Sora will watch this path and index all files in it.
  */

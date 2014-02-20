@@ -5,12 +5,16 @@ var file_scheme = new mongoose.Schema({
 	name:  String,
 	path:  String,
 	sha1:  String,
+	mtime: Date,
+	ctime: Date,
 	modified:  Date,
 	library:  String,
 	mime:  String,
 	size:  Number,
 	note: String,
 	scheme_version: Number,
+	staticTags: [String],
+	dirTags: [String],
 	tags: [String]
 });
 

@@ -23,6 +23,9 @@ var init = function(callback) {
 		var tag_scheme = require('./tag');
 		var Tag = db.model('Tag', tag_scheme);
 
+		var keyword_scheme = require('./keyword');
+		var Keyword = db.model('Keyword', keyword_scheme);
+
 		var note_scheme = require('./note');
 		note_scheme.plugin(textSearch);
 		note_scheme.index({ title: 'text' });
@@ -37,7 +40,7 @@ var init = function(callback) {
 };
 
 exports.init = init;
-exports.SCHEME_VERSION_FILE = 1;
+exports.SCHEME_VERSION_FILE = 2;
 exports.SCHEME_VERSION_TAG = 1;
 exports.SCHEME_VERSION_NOTE = 1;
 

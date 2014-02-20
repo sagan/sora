@@ -7,67 +7,22 @@ var mongoose = require('mongoose');
 var mime = require('mime');
 var db = mongoose.connection;
 
-var fsutil = require('./fsutil');
 var config = require('../config');
 var database = require('../database');
+var fsutil = require('./fsutil');
+var fileProcess = require('./fileProcess');
 
 var Tag = db.model('Tag');
 var File = db.model('File');
 var Files = db.collection("files");
 var Tags = db.collection("tags");
 
-var getFileTags = function(file, stats) {
-	var relative_path = path.relative(config.library_path, file);
-	var filepath = path.dirname(relative_path);
-	if( filepath == '.' )
-		return [];
-	return filepath.split(path.sep);
-};
-
-var process_file = function(file, stats, tags, callback) {
-	var relative_path = path.relative(config.library_path, file);
-	console.log("process_file " + relative_path);
-	
-	var filepath = path.dirname(relative_path);
-	var filename = path.basename(relative_path);
-	var fileTags = getFileTags(file, stats);
-	
-	for(var i = 0; i < fileTags.length; i++) {
-		if( tags.indexOf(fileTags[i]) == -1 ) {
-			tags.push(fileTags[i]);
-		}
-	}
-
-	File.findOne({path: filepath, name: filename}, function(err, item) {
-		var get_new_file = function(old) {
-			var file = old || new File({path: filepath, name: filename});
-			file.size = stats.size;
-			file.modified = stats.mtime;
-			file.tags = fileTags;
-			file.mime = mime.lookup(filename);
-			file.scheme_version = database.SCHEME_VERSION_FILE;
-			return file;
-		};
-		if( !item ) {
-			var create_file = get_new_file();
-			create_file.save(function(err, saved) {
-				callback(err, {id: saved._id});
-			});
-		} else {
-			var new_file = get_new_file(item);
-			new_file.save(function(err, saved) {
-				callback(err, {id: saved._id});
-			});
-		}
-	});
-	
-
-};
-
-var scan_dir = function(dir, tags, result_callback, options) {
+var scanDir = function(relativeDir, library, result_callback, options) {
 
 	options = options || {};
 	
+	console.log('scan dir', relativeDir, library, options);
+	var dir = path.join(config.libraries[library].path, relativeDir);
 	var dirMetaFile = path.join(dir, config.libraryControlFileName);
 	var dirMeta;
 	var dirStats;
@@ -76,6 +31,8 @@ var scan_dir = function(dir, tags, result_callback, options) {
 	var dirChangedFiles = {};
 	var dirDeletedFiles = {};
 	var dirSubDirs = {};
+
+	var tags = []; // all tags found in current dir (and sub dir)
 	
 	var readDirMeta = function(serieCallback) {
 		fs.readFile(dirMetaFile, {encoding: 'utf8'}, function(err, filecontent) {
@@ -157,11 +114,18 @@ var scan_dir = function(dir, tags, result_callback, options) {
 		}
 		
 		async.forEach(Object.keys(dirChangedFiles), function(name, callback){
-			process_file(path.join(dir, name), dirChangedFiles[name].stats, tags, function(err, result) {
+			fileProcess.process(path.join(relativeDir, name), dirChangedFiles[name].stats, library, function(err, result) {
 					if( ! dirMeta.files[name] )
 						dirMeta.files[name] = {};
 					dirMeta.files[name].modified = dirChangedFiles[name].stats.mtime;
 					dirMeta.files[name].id = result.id;
+
+					for(var i = 0; i < result.item.tags.length; i++) {
+						if( tags.indexOf(result.item.tags[i]) == -1 ) {
+							tags.push(result.item.tags[i]);
+						}
+					}
+
 					callback();
 			});
 		}, function() {
@@ -184,7 +148,12 @@ var scan_dir = function(dir, tags, result_callback, options) {
 	var processSubDirs = function(serieCallback) {
 		if( options.recursive ) {
 			async.forEach(Object.keys(dirSubDirs), function(name, callback){
-					scan_dir(path.join(dir, name), tags, function() {
+					scanDir(path.join(relativeDir, name), library, function(err, result) {
+						for(var i = 0; i < result.tags.length; i++) {
+							if( tags.indexOf(result.tags[i]) == -1 ) {
+								tags.push(result.tags[i]);
+							}
+						}
 						callback();
 					}, options);
 			}, function() {
@@ -208,12 +177,12 @@ var scan_dir = function(dir, tags, result_callback, options) {
 	};
 	
 	async.series([readDirMeta, readDirFiles, processFiles, cleanDeletedFiles, processSubDirs, updateDirMetaFile], function(err) {
-		result_callback(err);
+		result_callback(err, {tags: tags});
 	});
 
 };
 
-var process_tags = function(tags) {
+var processTags = function(tags) {
 	async.eachLimit(tags, 3, function(tag, callback){
 		Tag.findOne({name: tag}, function(err, item) {
 			var get_new_tag = function(old) {
@@ -243,19 +212,20 @@ var process_tags = function(tags) {
 };
 
 var scan = function(callback) {
-	console.log("scan dir " + config.library_path);
-	var tags = [];
-	scan_dir( config.library_path, tags, function() {
-		console.log("scan dir complete " + config.library_path);
-		console.log(tags);
-		process_tags(tags);
-		callback();
-	}, {recursive: true});
+	Object.keys(config.libraries).forEach(function(library) {
+		var libraryPath = config.libraries[library].path;
+		console.log("scan dir " + libraryPath);
+		scanDir("", library, function(error, result) {
+			console.log("scan library dir complete " + libraryPath);
+			console.log(result.tags);
+			processTags(result.tags);
+			callback();
+		}, {recursive: true});
+	});
 };
 
 var daemon_running = false;
-
-var daemon = function(callback) {
+var scanAll = function(callback) {
 	if( daemon_running )
 		return -1;
 	daemon_running = true;
@@ -268,17 +238,18 @@ var daemon = function(callback) {
 
 var watchedChangingDirs = {};
 
-var libraryChangedEventListener = function(event, filename, dirname) {
-	console.log('Library change detected. ', event, filename, dirname);
+var libraryChangedEventListener = function(event, filename, relativeDir, library) {
+	console.log('Library change detected. ', event, filename, relativeDir, library);
 	
 	var tags = [];
-	scan_dir(dirname, tags, function() {
-		process_tags(tags);
+	scanDir(relativeDir, library, function(err, result) {
+		processTags(result.tags);
 	}, {recursive: false});
 };
 
 var fsWatches = {};
-var addFsWatch = function(filepath, listener) {
+var addFsWatch = function(relativeDir, library, listener) {
+	var filepath = path.join(config.libraries[library].path, relativeDir);
 	if( fsWatches[filepath] )
 		return;	
 	console.log('Add watch for dir ' + filepath);
@@ -292,30 +263,32 @@ var addFsWatch = function(filepath, listener) {
 			watchedChangingDirs[filepath] = setTimeout(function() {
 				delete watchedChangingDirs[filepath];
 				if( event == 'rename' ) {
-					var chanedpath = path.join(filepath, filename);
-					fs.lstat(chanedpath, function(err, stats) {
+					var chanedPath = path.join(relativeDir, filename);
+					var changedFsPath = path.join(filepath, filename);
+					fs.lstat(changedFsPath, function(err, stats) {
 						if( !err && stats.isDirectory() && ! fsWatches[chanedpath] ) {
 							// new directory created ?
-							addFsWatch(chanedpath, listener);
-							listener('change', '', chanedpath);
+							addFsWatch(chanedPath, library, listener);
+							listener('change', '', changedPath, library);
 						} else {
-							listener(event, filename, filepath);	
+							listener(event, filename, relativeDir, library);
 						}
 					});	
 				} else {
-					listener(event, filename, filepath);
+					listener(event, filename, relativeDir, library);
 				}
 			}, 1000);
 		}
 	});
 };
 
-var setupWatches =function(dir, listener, result_callback) {
+var setupWatches =function(relativeDir, library, listener, result_callback) {
+	var dir = path.join(config.libraries[library].path, relativeDir);
 	fs.readdir(dir, function(err, files) {
 		if( err ) {
 			result_callback(err);
 		} else {
-			addFsWatch(dir, libraryChangedEventListener);
+			addFsWatch(relativeDir, library, libraryChangedEventListener);
 			async.forEach(files, function(file, callback) {
 				var filepath = path.join(dir,file);
 				fs.lstat(filepath, function(err, stats) {
@@ -327,7 +300,7 @@ var setupWatches =function(dir, listener, result_callback) {
 					if( !stats.isDirectory() || file.substr(0, 1) == '.' ) {
 						callback();	
 					} else {
-						setupWatches(filepath, listener, function() {
+						setupWatches(path.join(relativeDir, file), library, listener, function() {
 							callback();
 						});
 					}
@@ -340,10 +313,11 @@ var setupWatches =function(dir, listener, result_callback) {
 };
 
 var init = function() {
-	//setInterval(daemon, 1 * 60 * 1000);
-	daemon(function() {
-		setupWatches(config.library_path, libraryChangedEventListener, function() {
-			console.log('setup fs watches complete');
+	scanAll(function() {
+		Object.keys(config.libraries).forEach(function(library) {
+			setupWatches("", library, libraryChangedEventListener, function() {
+				console.log('setup fs watches complete');
+			});
 		});
 	});
 };

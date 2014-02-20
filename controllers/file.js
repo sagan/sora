@@ -20,7 +20,7 @@ var query = function(req, res, next) {
 	var skip = req.query.skip || 0;
 	var limit = req.query.limit || 20;
 	var sort = {};
-	sort[req.query.sort || 'modified'] = req.query.order || -1;
+	sort[req.query.sort || 'mtime'] = req.query.order || -1;
 		
 	if( condition.search ) {
 		File.textSearch(condition.search, function(err, output) {
@@ -65,7 +65,7 @@ var getBySha1 = function(req, res, next) {
 			console.log(err);
 			return res.send(404);
 		}
-		return res.sendfile(path.join(config.library_path, file.path, file.name));
+		return res.sendfile(path.join(config.libraries[file.library].path, file.path, file.name));
 	});
 };
 
@@ -79,7 +79,7 @@ var raw_file = function(req, res, next) {
 		if( !file.path ) {
 			return res.send(403, 'File Not Available');
 		}
-		return res.sendfile(path.join(config.library_path, file.path, file.name));
+		return res.sendfile(path.join(config.libraries[file.library].path, file.path, file.name));
 	});
 };
 
