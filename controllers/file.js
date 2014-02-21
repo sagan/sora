@@ -37,6 +37,7 @@ var query = function(req, res, next) {
 		});
 	} else {
 		condition = File.buildQuery(condition);
+		condition._deleted = {$ne: true};
 		File.count(condition, function(err, count) {
 			File.find(condition).sort(sort).skip(skip).limit(limit).exec(function(err, files) {
 				if (err) {
@@ -69,6 +70,12 @@ var getBySha1 = function(req, res, next) {
 	});
 };
 
+var downloadBySha1 = function(req, res, next) {
+	var sendheader = 'attachment;';
+	res.set("Content-Disposition", sendheader);
+	return getBySha1(req, res, next);
+};
+
 var raw_file = function(req, res, next) {
 	File.find({_id: req.params.id}, function(err, files) {
 		if (err) {
@@ -91,16 +98,28 @@ var download_file = function(req, res, next) {
 
 var bind_routers = function(app, prefix) {
 	app.get(prefix + 'files/:id', checkAuthorize('public'), get);
+
 	app.get(prefix + 'files', checkAuthorize('public'), query);
+
 	//app.post(prefix + 'file/:id', checkAuthorize('admin'), save);
 	//app.delete(prefix + 'file/:id', checkAuthorize('admin'), remove);
 	
 	app.get('/:sha1([a-f0-9]{40})', checkAuthorize('public'), getBySha1);
 	app.get('/:id([a-f0-9]{24})', checkAuthorize('public'), raw_file);
-	app.get(prefix + 'files/:id/raw', checkAuthorize('public'), raw_file);
-	app.get(prefix + 'files/:id/raw/*', checkAuthorize('public'), raw_file);
-	app.get(prefix + 'files/:id/download', checkAuthorize('public'), download_file);
-	app.get(prefix + 'files/:id/download/*', checkAuthorize('public'), download_file);
+
+	app.get(prefix + 'files/:id([a-f0-9]{24})/raw', checkAuthorize('public'), raw_file);
+	app.get(prefix + 'files/:sha1([a-f0-9]{40})/raw', checkAuthorize('public'), getBySha1);
+
+	app.get(prefix + 'files/:id([a-f0-9]{24})/raw/*', checkAuthorize('public'), raw_file);
+	app.get(prefix + 'files/:sha1([a-f0-9]{40})/raw/*', checkAuthorize('public'), getBySha1);
+
+	app.get(prefix + 'files/:id([a-f0-9]{24})/download', checkAuthorize('public'), download_file);
+	app.get(prefix + 'files/:sha1([a-f0-9]{40})/download', checkAuthorize('public'), downloadBySha1);
+
+	app.get(prefix + 'files/:id([a-f0-9]{24})/download/*', checkAuthorize('public'), download_file);
+	app.get(prefix + 'files/:sha1([a-f0-9]{40})/download/*', checkAuthorize('public'), downloadBySha1);
+	
 };
 
 exports.bind_routers = bind_routers;
+

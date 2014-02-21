@@ -75,7 +75,7 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 						callback();
 					} else if( stats.isFile()) {
 						if( dirChanged ) {
-							if(path.extname(file) != '' && file.substr(0, 1) != '.')
+							if(path.extname(file) != '' && file.substr(0, 1) != '.' && stats.size != 0)
 								dirFiles[file] = {stats: stats};
 						}
 						callback();
@@ -136,9 +136,12 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 	
 	var cleanDeletedFiles = function(serieCallback) {
 		async.forEach(Object.keys(dirDeletedFiles), function(name, callback){
-			File.remove({_id: dirDeletedFiles[name].id}, function(err) {
-				delete dirMeta.files[name];
-				callback();
+			File.findOne({_id: dirDeletedFiles[name].id}, function(err, file) {
+				file._deleted = true;
+				fild.save(function(err) {
+					delete dirMeta.files[name];
+					callback();
+				});
 			});
 		}, function() {
 			serieCallback();

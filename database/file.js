@@ -16,6 +16,7 @@ var file_scheme = new mongoose.Schema({
 	staticTags: [String],
 	dirTags: [String],
 	tags: [String]
+	_deleted: Boolean,
 });
 
 file_scheme.statics.buildQuery = function (condition) {

@@ -3,7 +3,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 
 
-var hash_file = function(file) {
+var hashFile = function(file) {
 	var algo = "sha1";
 	var callback = console.log;
 
@@ -37,5 +37,5 @@ var hash_file = function(file) {
 	});
 };
 
-exports.hash_file = hash_file;
+exports.hashFile = hashFile;
 

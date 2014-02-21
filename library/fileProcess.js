@@ -22,43 +22,65 @@ var getFileDirTags = function(relative_path, stats) {
 };
 
 
-var process = function(relative_path, stats, library, callback) {
+var process = function(relative_path, stats, library, resultCallback) {
 	console.log("process_file " + relative_path);
 	
 	var filepath = path.dirname(relative_path);
 	var filename = path.basename(relative_path);
 	var fileDirTags = getFileDirTags(relative_path, stats);
+	var fileAbsPath  path.join(config.libraries[library].path, relative_path);
+	var fileHash = '';
+	var fileSaved = null;
 
-	File.findOne({path: filepath, name: filename, library: library}, function(err, item) {
-		var get_new_file = function(old) {
-			var file = old || new File({path: filepath, name: filename, library: library});
-			file.size = stats.size;
-			file.modified = new Date();
-			file.mtime = stats.mtime;
+	var hash = function(callback) {
+		fsutil.hashFile(fileAbsPath, function(err, sha1) {
+			if( err ) {
+				callback('hash file error');
+			} else {
+				fileHash = sha1;
+				callback(null);
+			}
+		});
+	};
 
-			file.dirTags = fileDirTags;
-			file.staticTags = file.staticTags || [];
-			file.tags = [];
-			file.tags.push.apply(file.tags, file.dirTags);
-			file.tags.push.apply(file.tags, file.staticTags);
+	var save = function(callback) {
+		File.findOne({path: filepath, name: filename, library: library}, function(err, item) {
+			var get_new_file = function(old) {
+				var file = old || new File({path: filepath, name: filename, library: library});
+				file.size = stats.size;
+				file.modified = new Date();
+				file.mtime = stats.mtime;
 
-			file.mime = mime.lookup(filename);
-			file.scheme_version = database.SCHEME_VERSION_FILE;
-			return file;
-		};
-		if( !item ) {
-			var create_file = get_new_file();
-			create_file.save(function(err, saved) {
-				callback(err, {id: saved._id, item: saved});
+				if( fileHash )
+					file.sha1 = fileHash;
+
+				file.dirTags = fileDirTags;
+				file.staticTags = file.staticTags || [];
+				file.tags = [];
+				file.tags.push.apply(file.tags, file.dirTags);
+				file.tags.push.apply(file.tags, file.staticTags);
+
+				file.mime = mime.lookup(filename);
+				file.scheme_version = database.SCHEME_VERSION_FILE;
+				return file;
+			};
+			var toSaveFile;
+			if( !item ) {
+				toSaveFile = get_new_file();
+			} else {
+				toSaveFile = get_new_file(item);
+			}
+			toSaveFile.save(function(err, saved) {
+				fileSaved = saved;
+				callback(err);
 			});
-		} else {
-			var new_file = get_new_file(item);
-			new_file.save(function(err, saved) {
-				callback(err, {id: saved._id, item: saved});
-			});
-		}
-	});
+		});
+	};
 	
+
+	async.series([hash, save], function(err) {
+		resultCallback(err, {id: fileSaved._id, item: fileSaved});	
+	});
 
 };
 
