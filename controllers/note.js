@@ -20,7 +20,7 @@ var get = function(req, res) {
 					var images = [];
 					if( !err ) {
 						files.forEach(function(file) {
-							images.push(file._id);
+							images.push(file.sha1 || file._id);
 						});
 					}
 					var _note = {};
