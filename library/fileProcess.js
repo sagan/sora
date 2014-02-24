@@ -28,7 +28,7 @@ var process = function(relative_path, stats, library, resultCallback) {
 	var filepath = path.dirname(relative_path);
 	var filename = path.basename(relative_path);
 	var fileDirTags = getFileDirTags(relative_path, stats);
-	var fileAbsPath  path.join(config.libraries[library].path, relative_path);
+	var fileAbsPath  = path.join(config.libraries[library].path, relative_path);
 	var fileHash = '';
 	var fileSaved = null;
 
@@ -50,6 +50,7 @@ var process = function(relative_path, stats, library, resultCallback) {
 				file.size = stats.size;
 				file.modified = new Date();
 				file.mtime = stats.mtime;
+				file._deleted = null;
 
 				if( fileHash )
 					file.sha1 = fileHash;
@@ -79,6 +80,7 @@ var process = function(relative_path, stats, library, resultCallback) {
 	
 
 	async.series([hash, save], function(err) {
+		console.log('process file save', err);
 		resultCallback(err, {id: fileSaved._id, item: fileSaved});	
 	});
 

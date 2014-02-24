@@ -15,7 +15,7 @@ var file_scheme = new mongoose.Schema({
 	scheme_version: Number,
 	staticTags: [String],
 	dirTags: [String],
-	tags: [String]
+	tags: [String],
 	_deleted: Boolean,
 });
 

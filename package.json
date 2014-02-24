@@ -25,6 +25,9 @@
     "spdy": "~1.19.2",
     "passport": "~0.2.0",
     "connect-mongo": "~0.4.0",
-    "passport-google": "latest"
+    "passport-google": "latest",
+    "regexp-quote": "0.0.0",
+    "npm": "~1.4.4",
+    "install": "~0.1.7"
   }
 }

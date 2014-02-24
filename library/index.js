@@ -30,6 +30,7 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 	var dirFiles = {};
 	var dirChangedFiles = {};
 	var dirDeletedFiles = {};
+	var dirDeletedDirs = {};
 	var dirSubDirs = {};
 
 	var tags = []; // all tags found in current dir (and sub dir)
@@ -39,6 +40,7 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 			if(err || options.fullRescan) {
 				dirMeta = {
 					files: {},
+					dirs: {},
 				};
 			} else {
 				dirMeta = JSON.parse(filecontent);
@@ -106,10 +108,22 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 				}
 			}
 		}
-		
+
+		for(var name in dirSubDirs) {
+			if( !dirMeta.dirs[name] ) {
+				dirMeta.dirs[name] = 1;
+			}
+		}
+
 		for(var name in dirMeta.files) {
 			if( !dirFiles[name] ) {
 				dirDeletedFiles[name] = dirMeta.files[name];
+			}
+		}
+
+		for(var name in dirMeta.dirs) {
+			if( !dirSubDirs[name] ) {
+				dirDeletedDirs[name] = dirMeta.dirs[name];
 			}
 		}
 		
@@ -133,12 +147,31 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 		});
 		
 	};
+
+
+	var processDeletedDirs = function(serieCallback) {
+		async.forEach(Object.keys(dirDeletedDirs), function(name, callback){
+			File.find({library: library, path: {$regex: '^' + RegExp.quote(path.join(relativeDir, name)) + '(?=/|$)'}}, function(err, files) {
+				async.forEach(files, function(file, callback) {
+					file._deleted = true;
+					file.save(function(err) {
+						callback();
+					});	
+				}, function(err) {
+					delete dirMeta.dirs[name];
+					callback();
+				});
+			});
+		}, function() {
+			serieCallback();
+		});
+	};
 	
 	var cleanDeletedFiles = function(serieCallback) {
 		async.forEach(Object.keys(dirDeletedFiles), function(name, callback){
 			File.findOne({_id: dirDeletedFiles[name].id}, function(err, file) {
 				file._deleted = true;
-				fild.save(function(err) {
+				file.save(function(err) {
 					delete dirMeta.files[name];
 					callback();
 				});
@@ -168,7 +201,7 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 	};
 	
 	var updateDirMetaFile = function(serieCallback) {
-		if( dirChanged || Object.keys(dirChangedFiles).length != 0 || Object.keys(dirDeletedFiles) != 0) {
+		if( dirChanged || Object.keys(dirDeletedDirs).length != 0 ||Object.keys(dirChangedFiles).length != 0 || Object.keys(dirDeletedFiles) != 0) {
 			if( dirChanged )
 				dirMeta.modified = dirStats.mtime;
 			fs.writeFile(dirMetaFile, JSON.stringify(dirMeta), function(err) {
@@ -179,7 +212,7 @@ var scanDir = function(relativeDir, library, result_callback, options) {
 		}
 	};
 	
-	async.series([readDirMeta, readDirFiles, processFiles, cleanDeletedFiles, processSubDirs, updateDirMetaFile], function(err) {
+	async.series([readDirMeta, readDirFiles, processFiles, processDeletedDirs, cleanDeletedFiles, processSubDirs, updateDirMetaFile], function(err) {
 		result_callback(err, {tags: tags});
 	});
 
@@ -266,12 +299,12 @@ var addFsWatch = function(relativeDir, library, listener) {
 			watchedChangingDirs[filepath] = setTimeout(function() {
 				delete watchedChangingDirs[filepath];
 				if( event == 'rename' ) {
-					var chanedPath = path.join(relativeDir, filename);
+					var changedPath = path.join(relativeDir, filename);
 					var changedFsPath = path.join(filepath, filename);
 					fs.lstat(changedFsPath, function(err, stats) {
-						if( !err && stats.isDirectory() && ! fsWatches[chanedpath] ) {
+						if( !err && stats.isDirectory() && ! fsWatches[changedPath] ) {
 							// new directory created ?
-							addFsWatch(chanedPath, library, listener);
+							addFsWatch(changedPath, library, listener);
 							listener('change', '', changedPath, library);
 						} else {
 							listener(event, filename, relativeDir, library);

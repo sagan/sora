@@ -8,6 +8,7 @@ var http = require('http');
 var express = require('express');
 var spdy = require('spdy');
 var app = express();
+RegExp.quote = require('regexp-quote'); //extend Regex quote
 
 var config = require('./config');
 require('./settings').init(app);

@@ -60,6 +60,17 @@ var get = function(req, res, next) {
 	});
 };
 
+var getSha1 = function(req, res, next) {
+	File.findOne({sha1: req.params.sha1}, function(err, file) {
+		if (err || !file) {
+			console.log(err);
+			return res.send(503);
+		}
+		return res.json({item: file});
+	});
+};
+
+
 var getBySha1 = function(req, res, next) {
 	File.findOne({sha1: req.params.sha1}, function(err, file) {
 		if (err || !file) {
@@ -97,7 +108,8 @@ var download_file = function(req, res, next) {
 };
 
 var bind_routers = function(app, prefix) {
-	app.get(prefix + 'files/:id', checkAuthorize('public'), get);
+	app.get(prefix + 'files/:id([a-f0-9]{24})', checkAuthorize('public'), get);
+	app.get(prefix + 'files/:sha1([a-f0-9]{40})', checkAuthorize('public'), getSha1);
 
 	app.get(prefix + 'files', checkAuthorize('public'), query);
 

@@ -29,7 +29,7 @@
 					<tbody>
 						<tr ng-repeat="file in files | filter: filter">
 							<td>
-								<span><a href="files/{{file._id}}">{{file.name}}</a></span>
+								<span><a href="files/{{file.sha1 || file._id}}">{{file.name}}</a></span>
 							</td>
 							<td>
 								<span>{{file.size}}</span>
