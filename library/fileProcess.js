@@ -63,6 +63,8 @@ var process = function(relative_path, stats, library, resultCallback) {
 
 				file.mime = mime.lookup(filename);
 				file.scheme_version = database.SCHEME_VERSION_FILE;
+
+				file._deleted = false;
 				return file;
 			};
 			var toSaveFile;

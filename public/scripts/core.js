@@ -40,6 +40,10 @@ var app = angular.module("app", [
 		title: "Notes",
 		url: "/notes",
 		templateUrl: 'templates/notes.html'
+	}).state('notes/:id', {
+		title: "Note",
+		url: "/notes/:id",
+		templateUrl: 'templates/note.html'
 	}).state('admin', { // admin state and sub states
 		title: "Control Panel",
 		url: "/admin",

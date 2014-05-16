@@ -1,0 +1,36 @@
+<div ng-controller="NoteController">
+	<h2>{{"Note" | translate}} {{note.title}}</h2>
+	<markdown extensions="github" ng-model="note.content"></markdown>
+	<div>
+		<img ng-repeat="image in note._images" ng-src="{{image}}" />
+	</div>
+	<table class="table table-bordered table-fixed-columns-width">
+		<thead>
+			<tr>
+				<th width="30%">{{"Attribute" | translate}}</th>
+				<th width="70%">{{"Value" | translate}}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<span>{{"Tags" | translate}}</span>
+				</td>
+				<td>
+					<ul class="list list-inline" style="display: inline;">
+						<li ng-repeat="tag in note.tags"><a ui-sref="files({tags: tag})" class="label label-tag label-info">{{tag}}</a></li>
+					</ul>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<span>{{"Modofied" | translate}}</span>
+				</td>
+				<td>
+					<span>{{note.modified | date:'medium'}}</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+</div>

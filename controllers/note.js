@@ -16,7 +16,7 @@ var get = function(req, res) {
 			return res.send(503);
 		} else {
 			if( note.fileTags ) {
-				File.find({tags: {'$all': note.fileTags}, mime: /^image\//}, function(err, files) {
+				File.find({tags: {'$all': note.fileTags}, mime: /^image\//, _deleted: false}, function(err, files) {
 					var images = [];
 					if( !err ) {
 						files.forEach(function(file) {

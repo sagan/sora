@@ -6,6 +6,7 @@ app.controller("AppController", function($scope, $state, $modal, $location, $win
 
 	$scope.titleTranslateIds = {
 		'File' : 'FILE_LABEL',
+		'Note' : 'NOTE_LABEL',
 	};
 	
 	$scope.signIn = function() {
@@ -136,6 +137,16 @@ app.controller("FilesController", function($scope, $stateParams, $location, File
 	*/
 	
 });
+
+app.controller("NoteController", function($modal, $scope, $state, $window, $stateParams, $location, NoteService, AppService) {
+
+	$scope.note = NoteService.get($stateParams.id);
+
+	$scope.$watch('note.title', function(title) {
+		$scope.meta.pageParams.name = title;
+	});
+});
+
 
 app.controller("FileController", function($modal, $scope, $state, $window, $stateParams, $location, FileService, AppService) {
 
