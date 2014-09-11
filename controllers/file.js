@@ -31,7 +31,8 @@ var query = function(req, res, next) {
 			}
 			var files = [];
 			for(var i = 0; i < output.results.length; i++) {
-				files.push(output.results[i].obj);
+                if( !output.results[i].obj._deleted )
+				    files.push(output.results[i].obj);
 			}
 			return res.json({items: files});
 		});

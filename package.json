@@ -11,23 +11,25 @@
     "url": "https://github.com/sagan/sora.git"
   },
   "dependencies": {
+    "async": "*",
+    "connect-mongo": "~0.4.0",
     "express": "latest",
+    "helmet": "~0.1.2",
+    "install": "~0.1.7",
     "jade": "*",
     "locale": "*",
-    "async": "*",
     "mime": "*",
-    "socket.io": "*",
-    "mongoose-text-search": "*",
-    "mongoose": "*",
     "mongodb": "*",
-    "prerender-node": "~0.1.16",
-    "helmet": "~0.1.2",
-    "spdy": "~1.19.2",
-    "passport": "~0.2.0",
-    "connect-mongo": "~0.4.0",
-    "passport-google": "latest",
-    "regexp-quote": "0.0.0",
+    "mongoose": "*",
+    "mongoose-text-search": "*",
     "npm": "~1.4.4",
-    "install": "~0.1.7"
+    "passport": "~0.2.0",
+    "passport-google": "latest",
+    "prerender-node": "~0.1.16",
+    "q": "^1.0.1",
+    "regexp-quote": "0.0.0",
+    "socket.io": "*",
+    "spdy": "~1.19.2",
+    "yargs": "^1.3.1"
   }
 }
