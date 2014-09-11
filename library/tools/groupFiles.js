@@ -13,8 +13,6 @@ function lcs(x,y){
         c += x[i];
         i++;
     }
-    if( c.length < 5 )
-        return '';
     return c;
 }
 
@@ -35,6 +33,7 @@ var process = function(dir, cb, _options) {
     var fileList = [];
 
     var prepare = function(callback) {
+		console.log('read dir', dir);
         fs.readdir(dir, function(err, files) {
             if( err ) {
                 console.log('readdir error', err);
@@ -96,7 +95,7 @@ var process = function(dir, cb, _options) {
                 if( toCompareFile == filename )
                     return;
                 var common = lcs(filename, toCompareFile); 
-                if( common.length > 0 )
+                if( common.length > 5 )
                     commons.push({f: toCompareFile, c: common});
             });
             commons.sort(function(a, b) {
@@ -107,31 +106,35 @@ var process = function(dir, cb, _options) {
                     s = b.c;
                     l = a.c; 
                     flag = true;
-                    if( l.indexOf(s) == 0 ) {
-                        var r = l.substr(s.length);
-                        if( s[s.length - 1] == '[' || s[s.length - 1] == '(')
-                            r = s[s.length - 1] + r;
-                        
-                        /*
-                        var seriesRegex = [
-                            /(\[)(\d+)(\])/,
-                            /(\()(\d+)(\))/,
-                            /(\()(第\d+.?)(\))/,
-                            /(\[)(第\d+.?)(\])/,
-                        ];
-                        */
+                }
+				if( l.indexOf(s) == 0 ) {
+                    var r = l.substr(s.length);
 
-                        if( /^\s*(\[[^\[\(\]\)\d]*\d+[^\[\(\]\)\d]*\])/i.test(r)
-                            || /^\s*(\([^\[\(\]\)\d]*\d+[^\[\(\]\)\d]*\))/i.test(r) ) {
-                            return flag ? 1 : -1;
-                        }
+					var parseSeries = s.match(/([\[\(]|\s*\-?\s*\d+\s*)[^\[\(\]\)]*$/i);
+					if( parseSeries )
+						r = parseSeries[0] + r;
+                        
+                    if( /^\s*\[[^\[\]]+\]/i.test(r)
+						|| /^\s*\([^\(\)]+\)/i.test(r)
+						|| /^\s*\-\s*\d+/i.test(r)
+						) {
+                        return flag ? 1 : -1;
                     }
                 }
                 return b.c.length - a.c.length;
             });
             if( commons.length ) {
-                // 去掉末尾的 [*, (* 的半边字符串，暴力而简洁
-                var common = commons[0].c.replace(/[\[\(][^\[\(\]\)]*$/, '').trim();
+                var common = commons[0].c.trim();
+
+				 // 去掉末尾的 [*, (* 的半边字符串，暴力而简洁
+				common = common.replace(/[\[\(][^\[\(\]\)]*$/, '');
+				
+				// 去掉末尾的 '- 23'
+				common = common.replace(/\s*-\s*\d+\s*$/, '');
+				
+				// 如果前半部分是扩展名, 去掉所有之后的
+				common = common.replace(/\.(mkv|rm|rmvb|mp4|3gp|wmv)[-\s\._].*$/i, '');
+				
                 groups[common] = groups[common] || [];
                 groups[common].push(filename);
             }
@@ -178,6 +181,7 @@ var main = function() {
         dst: '',
     }).argv;
     process(argv.dir, function(err, result) {
+		console.log('result groups size: ', Object.keys(result.groups).length);
         console.log('result: ', util.inspect(result));
     }, {filter: argv.filter, move: argv.dst});
 };
