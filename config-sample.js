@@ -17,7 +17,6 @@ var config = {};
 
 module.exports = config;
 
-
 /* start editing from here */
 
 // your site name
@@ -159,3 +158,11 @@ config.server_port = 80;
  * default value is false
  */
 //config.disableAppcache = false;
+
+/**
+ * Google OAuth2.0 Client ID / Secret
+ * generate yours at https://code.google.com/apis/console/b/0/
+ */
+//config.googleClientId = '';
+//config.googleClientSecret = '';
+
